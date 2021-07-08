@@ -1,4 +1,12 @@
+/* ================== Vendor ================== */
 @import "vendor/tailwind";
+
+/* ================== Abstracts ================== */
+@import "abstracts/main";
+
+/* ================== Components ================== */
+@import "components/buttons";
+@import "components/forms";
 
 html {
   @apply bg-gray-200;

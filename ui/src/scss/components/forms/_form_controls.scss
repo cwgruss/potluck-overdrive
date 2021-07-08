@@ -1,0 +1,21 @@
+//
+// - Form Field
+//
+.input_field {
+  @apply flex;
+  @apply flex-row;
+  @apply w-full;
+  @apply mt-2;
+}
+
+.input {
+  @apply border-2;
+  @apply border-gray-400;
+  @apply py-2;
+  @apply px-3;
+  @apply w-full;
+
+  @include placeholder {
+    @apply border-gray-500;
+  }
+}

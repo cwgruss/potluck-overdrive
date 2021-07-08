@@ -1,0 +1,16 @@
+.button {
+  @apply inline-flex;
+  @apply items-center;
+  @apply content-center;
+  @apply whitespace-nowrap;
+  @apply overflow-hidden;
+  @apply text-base;
+  @apply uppercase;
+  @apply px-4;
+}
+
+.button--primary {
+  @apply bg-blue-800;
+  @apply text-gray-300;
+  @apply h-11;
+}

@@ -14,8 +14,6 @@ function addStyleResource(rule) {
     .use("style-resource")
     .loader("style-resources-loader")
     .options({
-      patterns: [
-        path.resolve(__dirname, "./src/scss/abstracts/_variables.scss"),
-      ],
+      patterns: [path.resolve(__dirname, "./src/scss/abstracts/_main.scss")],
     });
 }
