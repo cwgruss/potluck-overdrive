@@ -1,6 +1,11 @@
 <template>
   <div class="create_account">
     <h1 class="text-gray-600 text-5xl block mb-3">Create an Account</h1>
+    <div>
+      <button class="button text-gray-800" v-on:click="handleGoogleSignIn">
+        Google
+      </button>
+    </div>
     <form action="" class="form create_account__form">
       <fieldset class="fieldset">
         <div class="fields">
@@ -53,11 +58,31 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { TYPES } from "@/api/providers/types";
+import { Container as InversifyContainer } from "inversify";
+import AccountService from "@/api/services/account/account.service";
 
 @Component({
-  components: {},
+  inject: {
+    container: TYPES.Container,
+  },
 })
-export default class CreateAccount extends Vue {}
+export default class CreateAccount extends Vue {
+  container!: InversifyContainer;
+  service?: AccountService;
+
+  created() {
+    console.log("created CreateAccount");
+
+    this.service = this.container.get(TYPES.AccountService);
+  }
+
+  handleGoogleSignIn() {
+    console.log("Clicked");
+
+    this.service?.signInWithGoogle();
+  }
+}
 </script>
 
 <style land="scss">

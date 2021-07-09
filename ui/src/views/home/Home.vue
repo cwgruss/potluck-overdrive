@@ -10,12 +10,22 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import CreateAccount from "@/components/account/CreateAccount.vue"; // @ is an alias to /src
+import CreateAccount from "@/components/account/CreateAccount.vue";
+import { TYPES } from "@/api/providers/types";
 
 @Component({
+  inject: {
+    container: TYPES.Container,
+  },
   components: {
     CreateAccount,
   },
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  container: any;
+  created() {
+    console.log("HOME");
+    console.log(this.container);
+  }
+}
 </script>
