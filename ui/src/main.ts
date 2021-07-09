@@ -3,7 +3,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import "./registerServiceWorker";
 import router from "./router";
-import store from "./api/infrastructure/store";
+import store from "./shared/api/infrastructure/store";
 import "./scss/main.scss";
 import { auth } from "./firebase";
 

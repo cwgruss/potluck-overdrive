@@ -58,9 +58,9 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { TYPES } from "@/api/providers/types";
 import { Container as InversifyContainer } from "inversify";
-import AccountService from "@/api/services/account/account.service";
+import { TYPES } from "@/shared/providers/types";
+import AccountService from "@/modules/account/account.service";
 
 @Component({
   inject: {
@@ -71,13 +71,13 @@ export default class CreateAccount extends Vue {
   container!: InversifyContainer;
   service?: AccountService;
 
-  created() {
+  created(): void {
     console.log("created CreateAccount");
 
     this.service = this.container.get(TYPES.AccountService);
   }
 
-  handleGoogleSignIn() {
+  handleGoogleSignIn(): void {
     console.log("Clicked");
 
     this.service?.signInWithGoogle();

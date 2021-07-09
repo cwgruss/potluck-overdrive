@@ -10,8 +10,9 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import CreateAccount from "@/components/account/CreateAccount.vue";
-import { TYPES } from "@/api/providers/types";
+import CreateAccount from "@/modules/account/CreateAccount.vue";
+import { TYPES } from "@/shared/providers/types";
+import { Container as InversifyContainer } from "inversify";
 
 @Component({
   inject: {
@@ -22,8 +23,9 @@ import { TYPES } from "@/api/providers/types";
   },
 })
 export default class Home extends Vue {
-  container: any;
-  created() {
+  container?: InversifyContainer;
+
+  created(): void {
     console.log("HOME");
     console.log(this.container);
   }

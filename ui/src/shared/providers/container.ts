@@ -6,11 +6,11 @@ import {
 import getDecorators from "inversify-inject-decorators";
 
 import firebase from "firebase/app";
-import FirebaseAuthRepository from "../infrastructure/repositories/Auth.repository.";
-import AccountService from "../services/account/account.service";
+import FirebaseAuthRepository from "../api/infrastructure/repositories/Auth.repository.";
+import AccountService from "../../modules/account/account.service";
 import Newable = interfaces.Newable;
 import ServiceIdentifier = interfaces.ServiceIdentifier;
-import { Nullable } from "@/util/types";
+import { Nullable } from "@/shared/util/types";
 import { TYPES } from "./types";
 import { analytics, auth, firestore } from "@/firebase";
 

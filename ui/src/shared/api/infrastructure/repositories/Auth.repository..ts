@@ -1,12 +1,12 @@
 import { inject, injectable } from "inversify";
 import firebase from "firebase/app";
-import Authentication from "@/api/domain/repositories/Auth.interface";
-import FirebaseAuthUser from "@/api/domain/models/User";
+import Authentication from "@/shared/api/domain/repositories/Auth.interface";
+import FirebaseAuthUser from "@/shared/api/domain/models/User";
 import {
   AuthProvider,
   AuthProviderTypes,
-} from "@/api/domain/repositories/AuthProvider.interface";
-import { TYPES } from "@/api/providers/types";
+} from "@/shared/api/domain/repositories/AuthProvider.interface";
+import { TYPES } from "@/shared/providers/types";
 
 @injectable()
 export default class FirebaseAuthRepository implements Authentication {

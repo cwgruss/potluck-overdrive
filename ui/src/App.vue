@@ -18,10 +18,10 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { getContainer, isContainerCreated } from "@/api/providers/container";
-import { TYPES } from "@/api/providers/types";
 import { Container as InversifyContainer } from "inversify";
-import { Nullable } from "@/util/types";
+import { TYPES } from "./shared/providers/types";
+import { getContainer } from "@/shared/providers";
+import { Nullable } from "./shared/util/types";
 
 let Container: Nullable<InversifyContainer> = getContainer();
 

@@ -1,7 +1,7 @@
-import FirebaseAuthUser from "@/api/domain/models/User";
-import { AuthProviderTypes } from "@/api/domain/repositories/AuthProvider.interface";
-import FirebaseAuthRepository from "@/api/infrastructure/repositories/Auth.repository.";
-import { TYPES } from "@/api/providers/types";
+import FirebaseAuthUser from "@/shared/api/domain/models/User";
+import { AuthProviderTypes } from "@/shared/api/domain/repositories/AuthProvider.interface";
+import FirebaseAuthRepository from "@/shared/api/infrastructure/repositories/Auth.repository.";
+import { TYPES } from "@/shared/providers/types";
 import { inject, injectable } from "inversify";
 
 @injectable()
