@@ -1,6 +1,9 @@
 const path = require("path");
 
 module.exports = {
+  configureWebpack: {
+    devtool: "source-map",
+  },
   chainWebpack: (config) => {
     const types = ["vue-modules", "vue", "normal-modules", "normal"];
     types.forEach((type) =>
