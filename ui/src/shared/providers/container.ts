@@ -13,6 +13,7 @@ import ServiceIdentifier = interfaces.ServiceIdentifier;
 import { Nullable } from "@/shared/util/types";
 import { TYPES } from "./types";
 import { analytics, auth, firestore } from "@/firebase";
+import { logging, LogManager } from "../util/logger";
 
 const INVERSIFY_CONFIG = {
   autoBindInjectable: true,
@@ -72,6 +73,7 @@ export function createContainer(
     .bind<firebase.analytics.Analytics>(TYPES.FirebaseAnalytics)
     .toConstantValue(analytics);
 
+  container.bind<LogManager>(TYPES.LogManager).toConstantValue(logging);
   for (const typeId of containedDependencies) {
     bindDependency(typeId);
   }

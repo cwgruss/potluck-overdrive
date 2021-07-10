@@ -5,6 +5,7 @@ const TYPES = {
   Firestore: Symbol.for("Vendors/Services/Firestore"),
   Authentication: Symbol.for("Domain/Repositories/Authentication"),
   AccountService: Symbol.for("Services/Account"),
+  LogManager: Symbol.for("Shared/Util/Logger/LogManager"),
 };
 
 export { TYPES };

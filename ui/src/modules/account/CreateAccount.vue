@@ -61,6 +61,8 @@ import { Component, Vue } from "vue-property-decorator";
 import { Container as InversifyContainer } from "inversify";
 import { TYPES } from "@/shared/providers/types";
 import AccountService from "@/modules/account/account.service";
+import { Logger } from "@/shared/util/logger";
+import { LogManager } from "@/shared/util/logger";
 
 @Component({
   inject: {
@@ -70,15 +72,19 @@ import AccountService from "@/modules/account/account.service";
 export default class CreateAccount extends Vue {
   container!: InversifyContainer;
   service?: AccountService;
+  logger?: Logger;
 
   created(): void {
-    console.log("created CreateAccount");
-
     this.service = this.container.get(TYPES.AccountService);
+    this.logger = this.container
+      .get<LogManager>(TYPES.LogManager)
+      .getLogger("modules.account.CreateAccount");
+
+    this.logger?.trace("created CreateAccount");
   }
 
   handleGoogleSignIn(): void {
-    console.log("Clicked");
+    this.logger?.trace("Clicked");
 
     this.service?.signInWithGoogle();
   }
