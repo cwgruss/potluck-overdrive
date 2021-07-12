@@ -1,32 +1,40 @@
 import firebase from "firebase/app";
+import { Entity } from "../util/Entity";
+import { UniqueEntityID } from "../util/UniqueEntityID";
+import { EmailAddress } from "./EmailAddress";
 
-export default class FirebaseAuthUser {
-  private _uid: string | null = null;
-  private _photoURL: string | null = null;
+interface FirebaseUserProps {
+  uid: string;
+  emailAddress: EmailAddress;
+  displayName: string | null;
+  photoURL: string | null;
+}
 
-  get uid(): string | null {
-    return this._uid;
+export default class FirebaseAuthUser extends Entity<FirebaseUserProps> {
+  get id(): UniqueEntityID {
+    return this._id;
+  }
+
+  get displayName(): string | null {
+    return this.props.displayName;
   }
 
   get photoURL(): string | null {
-    return this._photoURL;
+    return this.props.photoURL;
   }
 
-  constructor(
-    private _name: string | null,
-    private _emailAddress: string | null,
-    private _credential?: firebase.auth.UserCredential
-  ) {
-    this._initFromCredential(_credential);
+  get emailAddress(): EmailAddress {
+    return this.props.emailAddress;
   }
 
-  private _initFromCredential(credential?: firebase.auth.UserCredential): void {
-    if (!credential || !credential.user) {
-      return;
-    }
-    const { user } = credential;
+  private constructor(props: FirebaseUserProps, id?: UniqueEntityID) {
+    super(props, id);
+  }
 
-    this._photoURL = user.photoURL;
-    this._uid = user.uid;
+  public static create(
+    props: FirebaseUserProps,
+    id?: UniqueEntityID
+  ): FirebaseAuthUser {
+    return new FirebaseAuthUser(props, id);
   }
 }

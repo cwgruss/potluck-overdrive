@@ -9,6 +9,7 @@ import {
   OAuthProviderUrls,
 } from "@/shared/api/domain/repositories/AuthProvider.interface";
 import { TYPES } from "@/shared/providers/types";
+import { EmailAddress } from "../../domain/models/EmailAddress";
 
 @injectable()
 export default class FirebaseAuthRepository implements Authentication {
@@ -65,8 +66,20 @@ export default class FirebaseAuthRepository implements Authentication {
       if (!credential || !credential.user) {
         throw new Error("No User found");
       }
-      const { displayName, email: emailAddress } = credential.user;
-      const user = new FirebaseAuthUser(displayName, emailAddress, credential);
+      const {
+        displayName,
+        email: emailAddress,
+        uid,
+        photoURL,
+      } = credential.user;
+
+      const user = FirebaseAuthUser.create({
+        uid,
+        displayName,
+        emailAddress: EmailAddress.create(emailAddress),
+        photoURL,
+      });
+
       return user;
     } catch (err) {
       console.error(err.message);
