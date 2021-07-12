@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import firebase from "firebase/app";
-import Authentication from "@/shared/api/domain/repositories/Auth.interface";
+import { Authentication } from "@/shared/api/domain/adapters";
 import FirebaseAuthUser from "@/shared/api/domain/models/User";
 import {
   AuthProvider,
@@ -12,10 +12,10 @@ import { TYPES } from "@/shared/providers/types";
 import { EmailAddress } from "../../domain/models/EmailAddress";
 
 @injectable()
-export default class FirebaseAuthRepository implements Authentication {
+export class FirebaseAuthAdapter implements Authentication {
   constructor(@inject(TYPES.FirebaseAuth) private _auth: firebase.auth.Auth) {}
 
-  async createUserWithEmailAndPassword(
+  async registerUserWithEmailAndPassword(
     emailAddress: string,
     password: string
   ): Promise<FirebaseAuthUser> {

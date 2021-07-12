@@ -1,13 +1,13 @@
 import FirebaseAuthUser from "../models/User";
-import { FirebaseAuthProviderTypes } from "./AuthProvider.interface";
+import { FirebaseAuthProviderTypes } from "../repositories/AuthProvider.interface";
 
-export default interface Authentication {
+export interface Authentication {
   /**
    *
    * @param emailAddress The user's email address.
    * @param password The user's password
    */
-  createUserWithEmailAndPassword(
+  registerUserWithEmailAndPassword(
     emailAddress: string,
     password: string
   ): Promise<FirebaseAuthUser>;

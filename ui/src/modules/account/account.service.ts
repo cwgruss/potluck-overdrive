@@ -3,24 +3,21 @@ import {
   FirebaseAuthProviderTypes,
   OAuthProviderTypes,
 } from "@/shared/api/domain/repositories/AuthProvider.interface";
-import FirebaseAuthRepository from "@/shared/api/infrastructure/repositories/Auth.repository.";
+import { FirebaseAuthAdapter } from "@/shared/api/infrastructure/adapters";
 import { TYPES } from "@/shared/providers/types";
 import { inject, injectable } from "inversify";
 
 @injectable()
 export default class AccountService {
   constructor(
-    @inject(TYPES.Authentication) private _auth: FirebaseAuthRepository
-  ) {
-    console.log("_auth");
-    console.log(this);
-  }
+    @inject(TYPES.Authentication) private _auth: FirebaseAuthAdapter
+  ) {}
 
   async createUserWithEmailAndPassword(
     emailAddress: string,
     password: string
   ): Promise<FirebaseAuthUser> {
-    const user = this._auth.createUserWithEmailAndPassword(
+    const user = this._auth.registerUserWithEmailAndPassword(
       emailAddress,
       password
     );

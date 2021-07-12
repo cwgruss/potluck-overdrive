@@ -6,7 +6,7 @@ import {
 import getDecorators from "inversify-inject-decorators";
 
 import firebase from "firebase/app";
-import FirebaseAuthRepository from "../api/infrastructure/repositories/Auth.repository.";
+import { FirebaseAuthAdapter } from "../api/infrastructure/adapters";
 import AccountService from "../../modules/account/account.service";
 import Newable = interfaces.Newable;
 import ServiceIdentifier = interfaces.ServiceIdentifier;
@@ -24,7 +24,7 @@ export const typeMap: ReadonlyMap<
   ServiceIdentifier<any>,
   Newable<any>
 > = new Map<ServiceIdentifier<any>, Newable<any>>([
-  [TYPES.Authentication, FirebaseAuthRepository],
+  [TYPES.Authentication, FirebaseAuthAdapter],
   [TYPES.AccountService, AccountService],
 ]);
 
