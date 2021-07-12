@@ -1,5 +1,5 @@
 import FirebaseAuthUser from "../models/User";
-import { AuthProviderTypes } from "./AuthProvider.interface";
+import { FirebaseAuthProviderTypes } from "./AuthProvider.interface";
 
 export default interface Authentication {
   /**
@@ -27,5 +27,7 @@ export default interface Authentication {
    * Authenticates a Firebase client using a popup-based OAuth authentication flow.
    * @param provider
    */
-  signInWithPopUp(provider: AuthProviderTypes): Promise<FirebaseAuthUser>;
+  signInWithPopUp(
+    provider: FirebaseAuthProviderTypes
+  ): Promise<FirebaseAuthUser>;
 }

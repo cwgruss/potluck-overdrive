@@ -8,7 +8,7 @@ import { LogManager } from "./LoggerManager";
 export class Logger {
   private _maanger: LogManager;
   private _module: string;
-  private _maxLogLevel: number = -1;
+  private _maxLogLevel = -1;
   private readonly _levels: { [level: string]: number } = DEFAULT_LOG_LEVELS;
 
   constructor(

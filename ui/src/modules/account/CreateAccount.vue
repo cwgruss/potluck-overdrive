@@ -103,10 +103,6 @@ export default class CreateAccount extends Vue {
   handleGoogleSignIn(): void {
     this.service?.signInWithGoogle();
   }
-
-  handleAppleSignIn(): void {
-    this.service?.signInWithApple();
-  }
 }
 </script>
 
