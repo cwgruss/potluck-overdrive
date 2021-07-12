@@ -13,7 +13,7 @@ export default class AccountService {
     @inject(TYPES.Authentication) private _auth: FirebaseAuthAdapter
   ) {}
 
-  async createUserWithEmailAndPassword(
+  async createNewUserWithEmailAndPassword(
     emailAddress: string,
     password: string
   ): Promise<FirebaseAuthUser> {
