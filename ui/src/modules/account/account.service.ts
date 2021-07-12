@@ -1,5 +1,8 @@
 import FirebaseAuthUser from "@/shared/api/domain/models/User";
-import { AuthProviderTypes } from "@/shared/api/domain/repositories/AuthProvider.interface";
+import {
+  FirebaseAuthProviderTypes,
+  OAuthProviderTypes,
+} from "@/shared/api/domain/repositories/AuthProvider.interface";
 import FirebaseAuthRepository from "@/shared/api/infrastructure/repositories/Auth.repository.";
 import { TYPES } from "@/shared/providers/types";
 import { inject, injectable } from "inversify";
@@ -32,15 +35,16 @@ export default class AccountService {
   }
 
   async signInWithGoogle(): Promise<void> {
-    const user = this._auth.signInWithPopUp(AuthProviderTypes.Google);
+    const user = this._auth.signInWithPopUp(FirebaseAuthProviderTypes.Google);
     console.log(user);
   }
 
-  async signInWithApple(): Promise<void> {
-    const user = this._auth.signInWithPopUp(AuthProviderTypes.Apple);
-  }
+  getSlackSignInUrl(): string {
+    const redirect = new URL("https://localhost:8082/");
+    let slackURL = this._auth.getSignInURL(OAuthProviderTypes.Slack);
+    slackURL += `&redirect_uri=${encodeURIComponent(redirect.toString())}`;
+    console.log(slackURL);
 
-  async signInWithSlack(): Promise<void> {
-    const user = this._auth.signInWithPopUp(AuthProviderTypes.Slack);
+    return slackURL;
   }
 }

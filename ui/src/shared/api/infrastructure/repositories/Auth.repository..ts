@@ -4,7 +4,9 @@ import Authentication from "@/shared/api/domain/repositories/Auth.interface";
 import FirebaseAuthUser from "@/shared/api/domain/models/User";
 import {
   AuthProvider,
-  AuthProviderTypes,
+  FirebaseAuthProviderTypes,
+  OAuthProviderTypes,
+  OAuthProviderUrls,
 } from "@/shared/api/domain/repositories/AuthProvider.interface";
 import { TYPES } from "@/shared/providers/types";
 
@@ -37,7 +39,7 @@ export default class FirebaseAuthRepository implements Authentication {
   }
 
   async signInWithPopUp(
-    providerType: AuthProviderTypes
+    providerType: FirebaseAuthProviderTypes
   ): Promise<FirebaseAuthUser> {
     const provider = AuthProvider[providerType];
     if (!provider) {
@@ -46,6 +48,13 @@ export default class FirebaseAuthRepository implements Authentication {
     const credential = this._auth.signInWithPopup(provider);
     const user = await this._createUserFromCredential(credential);
     return user;
+  }
+
+  getSignInURL(oauthProviderType: OAuthProviderTypes): string {
+    if (!(oauthProviderType in OAuthProviderUrls)) {
+      throw new Error(`${oauthProviderType} is not a valid OAuth type.`);
+    }
+    return OAuthProviderUrls[oauthProviderType];
   }
 
   private async _createUserFromCredential(

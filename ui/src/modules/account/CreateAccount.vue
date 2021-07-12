@@ -5,6 +5,16 @@
       <button class="button text-gray-800" v-on:click="handleGoogleSignIn">
         Google
       </button>
+      <button class="button text-gray-800" v-on:click="handleAppleSignIn">
+        Apple
+      </button>
+      <a
+        class="button text-gray-800"
+        target="_blank"
+        v-bind:href="slackSignInURL"
+      >
+        Slack
+      </a>
     </div>
     <form action="" class="form create_account__form">
       <fieldset class="fieldset">
@@ -74,6 +84,13 @@ export default class CreateAccount extends Vue {
   service?: AccountService;
   logger?: Logger;
 
+  get slackSignInURL(): string {
+    if (!this.service) {
+      throw new Error("");
+    }
+    return this.service?.getSlackSignInUrl();
+  }
+
   created(): void {
     this.service = this.container.get(TYPES.AccountService);
     this.logger = this.container
@@ -84,9 +101,11 @@ export default class CreateAccount extends Vue {
   }
 
   handleGoogleSignIn(): void {
-    this.logger?.trace("Clicked");
-
     this.service?.signInWithGoogle();
+  }
+
+  handleAppleSignIn(): void {
+    this.service?.signInWithApple();
   }
 }
 </script>
