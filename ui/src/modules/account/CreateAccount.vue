@@ -71,8 +71,8 @@ import { Component, Vue } from "vue-property-decorator";
 import { Container as InversifyContainer } from "inversify";
 import { TYPES } from "@/shared/providers/types";
 import AccountService from "@/modules/account/account.service";
-import { Logger } from "@/shared/util/logger";
-import { LogManager } from "@/shared/util/logger";
+import { Logger } from "@/shared/core/logger";
+import { LogManager } from "@/shared/core/logger";
 
 @Component({
   inject: {

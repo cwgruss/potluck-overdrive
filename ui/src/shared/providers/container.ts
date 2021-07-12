@@ -10,10 +10,10 @@ import FirebaseAuthRepository from "../api/infrastructure/repositories/Auth.repo
 import AccountService from "../../modules/account/account.service";
 import Newable = interfaces.Newable;
 import ServiceIdentifier = interfaces.ServiceIdentifier;
-import { Nullable } from "@/shared/util/types";
+import { Nullable } from "@/shared/core/types";
 import { TYPES } from "./types";
 import { analytics, auth, firestore } from "@/firebase";
-import { logging, LogManager } from "../util/logger";
+import { logging, LogManager } from "../core/logger";
 
 const INVERSIFY_CONFIG = {
   autoBindInjectable: true,

@@ -21,7 +21,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { Container as InversifyContainer } from "inversify";
 import { TYPES } from "./shared/providers/types";
 import { getContainer } from "@/shared/providers";
-import { Nullable } from "./shared/util/types";
+import { Nullable } from "./shared/core/types";
 
 let Container: Nullable<InversifyContainer> = getContainer();
 
