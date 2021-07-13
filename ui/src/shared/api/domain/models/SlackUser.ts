@@ -1,16 +1,9 @@
-import firebase from "firebase/app";
 import { Entity } from "../util/Entity";
 import { UniqueEntityID } from "../util/UniqueEntityID";
 import { EmailAddress } from "./EmailAddress";
+import { OAuthUserProps } from "./OauthUserProps";
 
-interface FirebaseUserProps {
-  uid: string;
-  emailAddress: EmailAddress;
-  displayName: string | null;
-  photoURL: string | null;
-}
-
-export default class FirebaseAuthUser extends Entity<FirebaseUserProps> {
+export default class SlackAuthUser extends Entity<OAuthUserProps> {
   get id(): UniqueEntityID {
     return this._id;
   }
@@ -27,14 +20,14 @@ export default class FirebaseAuthUser extends Entity<FirebaseUserProps> {
     return this.props.emailAddress;
   }
 
-  private constructor(props: FirebaseUserProps, id?: UniqueEntityID) {
+  private constructor(props: OAuthUserProps, id?: UniqueEntityID) {
     super(props, id);
   }
 
   public static create(
-    props: FirebaseUserProps,
+    props: OAuthUserProps,
     id?: UniqueEntityID
-  ): FirebaseAuthUser {
-    return new FirebaseAuthUser(props, id);
+  ): SlackAuthUser {
+    return new SlackAuthUser(props, id);
   }
 }

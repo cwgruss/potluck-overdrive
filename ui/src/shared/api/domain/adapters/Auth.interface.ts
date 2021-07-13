@@ -1,7 +1,7 @@
-import FirebaseAuthUser from "../models/User";
+import FirebaseAuthUser from "../models/FirebaseUser";
 import { FirebaseAuthProviderTypes } from "../repositories/AuthProvider.interface";
 
-export interface Authentication {
+export interface FirebaseAuthentication {
   /**
    *
    * @param emailAddress The user's email address.
@@ -30,4 +30,10 @@ export interface Authentication {
   signInWithPopUp(
     provider: FirebaseAuthProviderTypes
   ): Promise<FirebaseAuthUser>;
+}
+
+export interface OAuthAPIAuthentication<T> {
+  readonly _OAuthAPIURL: string;
+  getBearerToken(): Promise<string>;
+  signWithToken(token: string): Promise<T>;
 }

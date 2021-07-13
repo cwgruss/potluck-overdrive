@@ -1,9 +1,10 @@
 const TYPES = {
   Container: Symbol.for("Container"),
-  FirebaseAuth: Symbol.for("Vendor/Services/Authentication"),
-  FirebaseAnalytics: Symbol.for("Vendor/Services/Analytics"),
-  Firestore: Symbol.for("Vendors/Services/Firestore"),
-  Authentication: Symbol.for("Domain/Repositories/Authentication"),
+  __FirebaseAuth__: Symbol.for("Vendor/Services/Authentication"),
+  __FirebaseAnalytics__: Symbol.for("Vendor/Services/Analytics"),
+  __Firestore__: Symbol.for("Vendors/Services/Firestore"),
+  FirebaseAuth: Symbol.for("Domain/Authentication/Firebase"),
+  SlackAuth: Symbol.for("Domain/Authentication/Slack"),
   AccountService: Symbol.for("Services/Account"),
   LogManager: Symbol.for("Shared/Util/Logger/LogManager"),
 };

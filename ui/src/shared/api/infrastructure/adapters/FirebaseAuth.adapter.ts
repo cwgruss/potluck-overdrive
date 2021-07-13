@@ -1,19 +1,19 @@
 import { inject, injectable } from "inversify";
 import firebase from "firebase/app";
-import { Authentication } from "@/shared/api/domain/adapters";
-import FirebaseAuthUser from "@/shared/api/domain/models/User";
+import { FirebaseAuthentication } from "@/shared/api/domain/adapters";
+import FirebaseAuthUser from "@/shared/api/domain/models/FirebaseUser";
 import {
   AuthProvider,
   FirebaseAuthProviderTypes,
-  OAuthProviderTypes,
-  OAuthProviderUrls,
 } from "@/shared/api/domain/repositories/AuthProvider.interface";
 import { TYPES } from "@/shared/providers/types";
 import { EmailAddress } from "../../domain/models/EmailAddress";
 
 @injectable()
-export class FirebaseAuthAdapter implements Authentication {
-  constructor(@inject(TYPES.FirebaseAuth) private _auth: firebase.auth.Auth) {}
+export class FirebaseAuthAdapter implements FirebaseAuthentication {
+  constructor(
+    @inject(TYPES.__FirebaseAuth__) private _auth: firebase.auth.Auth
+  ) {}
 
   async registerUserWithEmailAndPassword(
     emailAddress: string,
@@ -49,13 +49,6 @@ export class FirebaseAuthAdapter implements Authentication {
     const credential = this._auth.signInWithPopup(provider);
     const user = await this._createUserFromCredential(credential);
     return user;
-  }
-
-  getSignInURL(oauthProviderType: OAuthProviderTypes): string {
-    if (!(oauthProviderType in OAuthProviderUrls)) {
-      throw new Error(`${oauthProviderType} is not a valid OAuth type.`);
-    }
-    return OAuthProviderUrls[oauthProviderType];
   }
 
   private async _createUserFromCredential(

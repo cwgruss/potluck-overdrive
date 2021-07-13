@@ -6,7 +6,7 @@ import {
 import getDecorators from "inversify-inject-decorators";
 
 import firebase from "firebase/app";
-import { FirebaseAuthAdapter } from "../api/infrastructure/adapters";
+
 import AccountService from "../../modules/account/account.service";
 import Newable = interfaces.Newable;
 import ServiceIdentifier = interfaces.ServiceIdentifier;
@@ -14,7 +14,10 @@ import { Nullable } from "@/shared/core/types";
 import { TYPES } from "./types";
 import { analytics, auth, firestore } from "@/firebase";
 import { logging, LogManager } from "../core/logger";
-
+import {
+  FirebaseAuthAdapter,
+  SlackAuthAdapter,
+} from "@/shared/api/infrastructure/adapters";
 const INVERSIFY_CONFIG = {
   autoBindInjectable: true,
   defaultScope: BindingScopeEnum.Singleton,
@@ -24,7 +27,8 @@ export const typeMap: ReadonlyMap<
   ServiceIdentifier<any>,
   Newable<any>
 > = new Map<ServiceIdentifier<any>, Newable<any>>([
-  [TYPES.Authentication, FirebaseAuthAdapter],
+  [TYPES.FirebaseAuth, FirebaseAuthAdapter],
+  [TYPES.SlackAuth, SlackAuthAdapter],
   [TYPES.AccountService, AccountService],
 ]);
 
@@ -63,14 +67,16 @@ export function createContainer(
 
   container = new InversifyContainer(INVERSIFY_CONFIG);
 
-  container.bind<firebase.auth.Auth>(TYPES.FirebaseAuth).toConstantValue(auth);
+  container
+    .bind<firebase.auth.Auth>(TYPES.__FirebaseAuth__)
+    .toConstantValue(auth);
 
   container
-    .bind<firebase.firestore.Firestore>(TYPES.Firestore)
+    .bind<firebase.firestore.Firestore>(TYPES.__Firestore__)
     .toConstantValue(firestore);
 
   container
-    .bind<firebase.analytics.Analytics>(TYPES.FirebaseAnalytics)
+    .bind<firebase.analytics.Analytics>(TYPES.__FirebaseAnalytics__)
     .toConstantValue(analytics);
 
   container.bind<LogManager>(TYPES.LogManager).toConstantValue(logging);

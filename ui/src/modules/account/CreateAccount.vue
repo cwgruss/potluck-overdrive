@@ -5,9 +5,7 @@
       <button class="button text-gray-800" v-on:click="handleGoogleSignIn">
         Google
       </button>
-      <button class="button text-gray-800" v-on:click="handleAppleSignIn">
-        Apple
-      </button>
+
       <a
         class="button text-gray-800"
         target="_blank"
@@ -81,27 +79,34 @@ import { LogManager } from "@/shared/core/logger";
 })
 export default class CreateAccount extends Vue {
   container!: InversifyContainer;
-  service?: AccountService;
+  private _accountService?: AccountService;
   logger?: Logger;
 
   get slackSignInURL(): string {
-    if (!this.service) {
+    if (!this._accountService) {
       throw new Error("");
     }
-    return this.service?.getSlackSignInUrl();
+    return this._accountService.slackSignInURL;
   }
 
   created(): void {
-    this.service = this.container.get(TYPES.AccountService);
+    this._accountService = this.container.get<AccountService>(
+      TYPES.AccountService
+    );
+
     this.logger = this.container
       .get<LogManager>(TYPES.LogManager)
       .getLogger("modules.account.CreateAccount");
 
-    this.logger?.trace("created CreateAccount");
+    this.logger?.info("created CreateAccount");
   }
 
   handleGoogleSignIn(): void {
-    this.service?.signInWithGoogle();
+    this._accountService?.signInWithGoogle();
+  }
+
+  handleSlackSignIn(): void {
+    // this._accountService?.signInWithSlack();
   }
 }
 </script>

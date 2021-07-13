@@ -1,23 +1,28 @@
-import FirebaseAuthUser from "@/shared/api/domain/models/User";
+import FirebaseAuthUser from "@/shared/api/domain/models/FirebaseUser";
+import { FirebaseAuthProviderTypes } from "@/shared/api/domain/repositories/AuthProvider.interface";
 import {
-  FirebaseAuthProviderTypes,
-  OAuthProviderTypes,
-} from "@/shared/api/domain/repositories/AuthProvider.interface";
-import { FirebaseAuthAdapter } from "@/shared/api/infrastructure/adapters";
+  FirebaseAuthAdapter,
+  SlackAuthAdapter,
+} from "@/shared/api/infrastructure/adapters";
 import { TYPES } from "@/shared/providers/types";
 import { inject, injectable } from "inversify";
 
 @injectable()
 export default class AccountService {
   constructor(
-    @inject(TYPES.Authentication) private _auth: FirebaseAuthAdapter
+    @inject(TYPES.FirebaseAuth) private _firebase: FirebaseAuthAdapter,
+    @inject(TYPES.SlackAuth) private _slack: SlackAuthAdapter
   ) {}
+
+  get slackSignInURL(): string {
+    return this._slack._OAuthAPIURL;
+  }
 
   async createNewUserWithEmailAndPassword(
     emailAddress: string,
     password: string
   ): Promise<FirebaseAuthUser> {
-    const user = this._auth.registerUserWithEmailAndPassword(
+    const user = this._firebase.registerUserWithEmailAndPassword(
       emailAddress,
       password
     );
@@ -28,20 +33,22 @@ export default class AccountService {
     emailAddress: string,
     password: string
   ): Promise<void> {
-    const user = this._auth.signInWithEmailAndPassword(emailAddress, password);
+    const user = this._firebase.signInWithEmailAndPassword(
+      emailAddress,
+      password
+    );
   }
 
   async signInWithGoogle(): Promise<void> {
-    const user = this._auth.signInWithPopUp(FirebaseAuthProviderTypes.Google);
+    const user = this._firebase.signInWithPopUp(
+      FirebaseAuthProviderTypes.Google
+    );
     console.log(user);
   }
 
-  getSlackSignInUrl(): string {
-    const redirect = new URL("https://localhost:8082/");
-    let slackURL = this._auth.getSignInURL(OAuthProviderTypes.Slack);
-    slackURL += `&redirect_uri=${encodeURIComponent(redirect.toString())}`;
-    console.log(slackURL);
-
-    return slackURL;
+  async signInWithSlack(code: string): Promise<void> {
+    const token = await this._slack.getBearerToken(code);
+    const user = await this._slack.signWithToken(token);
+    console.log(user);
   }
 }

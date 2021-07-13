@@ -18,5 +18,5 @@ export const AuthProvider: AuthProviderMap = {
 };
 
 export const OAuthProviderUrls: { [key in OAuthProviderTypes]: string } = {
-  Slack: `https://slack.com/oauth/v2/authorize?client_id=${process.env.VUE_APP_SLACK_CLIENT_ID}&user_scope=identity.basic`,
+  Slack: `https://slack.com/oauth/authorize`,
 };

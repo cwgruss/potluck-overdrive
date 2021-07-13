@@ -5,7 +5,8 @@ import { TYPES } from "@/shared/providers/types";
 export default class FirebaseAccountRepositoty {
   private _usersRef: firebase.firestore.DocumentData;
   constructor(
-    @inject(TYPES.Firestore) private _firestore: firebase.firestore.Firestore
+    @inject(TYPES.__Firestore__)
+    private _firestore: firebase.firestore.Firestore
   ) {
     this._usersRef = _firestore.collection("users");
   }
