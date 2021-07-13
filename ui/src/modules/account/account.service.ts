@@ -1,4 +1,5 @@
 import FirebaseAuthUser from "@/shared/api/domain/models/FirebaseUser";
+import SlackAuthUser from "@/shared/api/domain/models/SlackUser";
 import { FirebaseAuthProviderTypes } from "@/shared/api/domain/repositories/AuthProvider.interface";
 import {
   FirebaseAuthAdapter,
@@ -46,9 +47,10 @@ export default class AccountService {
     console.log(user);
   }
 
-  async signInWithSlack(code: string): Promise<void> {
+  async signInWithSlack(code: string): Promise<SlackAuthUser> {
     const token = await this._slack.getBearerToken(code);
     const user = await this._slack.signWithToken(token);
     console.log(user);
+    return user;
   }
 }

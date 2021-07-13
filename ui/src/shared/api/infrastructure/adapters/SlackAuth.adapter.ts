@@ -29,7 +29,7 @@ interface SlackSuccessResponse {
   };
 }
 
-const SLACK_REDIRECT_URI = `https://localhost:8082/`;
+const SLACK_REDIRECT_URI = `https://localhost:8082/slack-signin`;
 const scopes = ["identity.basic", "identity.email", "identity.avatar"].join(
   " "
 );
@@ -82,11 +82,11 @@ export class SlackAuthAdapter implements OAuthAPIAuthentication<SlackAuthUser> {
       throw new Error(`${oauthProviderType} is not a valid OAuth type.`);
     }
 
-    // if (!params || !params.has("redirect_uri")) {
-    //   throw new Error(
-    //     `Slack authentication requires a 'redirect_uri' property.`
-    //   );
-    // }
+    if (!params || !params.has("redirect_uri")) {
+      throw new Error(
+        `Slack authentication requires a 'redirect_uri' property.`
+      );
+    }
 
     const originStr = OAuthProviderUrls[oauthProviderType];
     const url = originStr + "?" + params.toString();
