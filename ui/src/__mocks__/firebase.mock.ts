@@ -6,29 +6,33 @@ export default jest.mock("firebase/app", () => {
     logEvent: jest.fn(),
   });
 
-  let _user: DeepPartial<firebase.User> | null = null;
-
+  let _credential: DeepPartial<firebase.auth.UserCredential> | null;
+  let _profile: DeepPartial<firebase.auth.AdditionalUserInfo | null>;
   const auth: any = jest.fn().mockReturnValue({
     signInWithRedirect: jest.fn(),
     createUserWithEmailAndPassword: function () {
+      return Promise.resolve({ ..._credential });
+    },
+    signInWithEmailAndPassword: function () {
+      return Promise.resolve({ ..._credential });
+    },
+    signInWithPopup: function () {
+      return Promise.resolve({ ..._credential });
+    },
+    getRedirectResult: function () {
       return Promise.resolve({
-        user: _user,
+        credential: { ..._credential },
+        user: {
+          getIdToken: jest.fn().mockResolvedValue("abc1234"),
+        },
+        additionalUserInfo: {
+          profile: {
+            email: "test@test.com",
+            name: "John Doe",
+          },
+        },
       });
     },
-    getRedirectResult: jest.fn().mockResolvedValue({
-      credential: {
-        providerId: "Google",
-      },
-      user: {
-        getIdToken: jest.fn().mockResolvedValue("abc1234"),
-      },
-      additionalUserInfo: {
-        profile: {
-          email: "test@test.com",
-          name: "John Doe",
-        },
-      },
-    }),
   });
 
   auth.GoogleAuthProvider = class {
@@ -37,9 +41,11 @@ export default jest.mock("firebase/app", () => {
 
   const __setup = (config: {
     credential: DeepPartial<firebase.auth.UserCredential>;
+    profile: DeepPartial<firebase.auth.AdditionalUserInfo>;
   }) => {
-    const { credential } = config;
-    _user = credential?.user || null;
+    const { credential, profile } = config;
+    _credential = credential;
+    _profile = profile;
   };
 
   return { auth, analytics, __setup };

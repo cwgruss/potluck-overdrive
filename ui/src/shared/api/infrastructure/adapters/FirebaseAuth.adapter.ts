@@ -61,6 +61,7 @@ export class FirebaseAuthAdapter implements FirebaseAuthentication {
       if (!credential || !credential.user) {
         throw new Error("No User found with those credentials");
       }
+
       const {
         displayName,
         email: emailAddress,
