@@ -9,7 +9,7 @@ import { TYPES } from "@/shared/providers/types";
 import { inject, injectable } from "inversify";
 
 @injectable()
-export default class AccountService {
+export class AccountService {
   constructor(
     @inject(TYPES.FirebaseAuth) private _firebase: FirebaseAuthAdapter,
     @inject(TYPES.SlackAuth) private _slack: SlackAuthAdapter

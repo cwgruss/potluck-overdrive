@@ -7,7 +7,7 @@ import getDecorators from "inversify-inject-decorators";
 
 import firebase from "firebase/app";
 
-import AccountService from "../../modules/account/account.service";
+import { AccountService } from "@/modules/account/account.service";
 import Newable = interfaces.Newable;
 import ServiceIdentifier = interfaces.ServiceIdentifier;
 import { Nullable } from "@/shared/core/types";

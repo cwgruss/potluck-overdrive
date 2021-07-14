@@ -1,30 +1,34 @@
 <template>
-  <section class="create_account">
-    <h1 class="text-gray-600 text-5xl block mb-3">Create an Account</h1>
+  <section class="sign_in">
+    <h1 class="text-gray-600 text-5xl block mb-3">Let's sign you in.</h1>
+    <p>It's been a minute.</p>
+    <div>
+      <button class="button text-gray-800" v-on:click="handleGoogleSignIn">
+        Google
+      </button>
 
+      <a
+        class="button text-gray-800"
+        target="_blank"
+        v-bind:href="slackSignInURL"
+      >
+        Slack
+      </a>
+    </div>
     <form action="" class="form create_account__form">
       <fieldset class="fieldset">
         <div class="fields">
           <div class="input_field">
-            <!-- Name -->
-            <label class="input_label" for="name">Name</label>
+            <!-- User uid (usernmae, email, or phone number) -->
+            <label class="input_label" for="user_uid"
+              >Phone, Email, or Username</label
+            >
             <input
               type="text"
-              name="name"
-              id="name"
+              name="user_uid"
+              id="user_uid"
               class="input"
-              placeholder="Name"
-            />
-          </div>
-          <div class="input_field">
-            <!-- Email Address -->
-            <label class="input_label" for="email_address">Email Address</label>
-            <input
-              type="text"
-              name="emailAddress"
-              id="email_address"
-              class="input"
-              placeholder="Email Address"
+              placeholder="Phone, Email, or Username"
             />
           </div>
           <div class="input_field">
@@ -44,7 +48,7 @@
             class="button button--primary create-account__submit"
             type="submit"
           >
-            Create Account
+            Sign In
           </button>
         </div>
       </fieldset>
@@ -57,49 +61,47 @@ import { Component, Vue } from "vue-property-decorator";
 import { Container as InversifyContainer } from "inversify";
 import { TYPES } from "@/shared/providers/types";
 import { AccountService } from "@/modules/account/account.service";
-import { Logger } from "@/shared/core/logger";
-import { LogManager } from "@/shared/core/logger";
 
 @Component({
   inject: {
     container: TYPES.Container,
   },
 })
-export default class CreateAccount extends Vue {
+export default class SignIn extends Vue {
   container!: InversifyContainer;
   private _accountService?: AccountService;
-  logger?: Logger;
+
+  get slackSignInURL(): string {
+    if (!this._accountService) {
+      throw new Error("");
+    }
+    return this._accountService.slackSignInURL;
+  }
 
   created(): void {
     this._accountService = this.container.get<AccountService>(
       TYPES.AccountService
     );
-
-    this.logger = this.container
-      .get<LogManager>(TYPES.LogManager)
-      .getLogger("modules.account.CreateAccount");
-
-    this.logger?.info("created CreateAccount");
   }
 
   handleGoogleSignIn(): void {
     this._accountService?.signInWithGoogle();
   }
 
-  handleSlackSignIn(): void {
-    // this._accountService?.signInWithSlack();
+  handleSlackSignIn(code: string): void {
+    this._accountService?.signInWithSlack(code);
   }
 }
 </script>
 
 <style land="scss">
-.create_account {
+.sign_in {
   @apply w-full;
   @apply mx-auto;
   @apply my-0;
 }
 
-.create_account__form {
+.sign_in__form {
   @apply flex;
   @apply m-0;
   @apply p-8;

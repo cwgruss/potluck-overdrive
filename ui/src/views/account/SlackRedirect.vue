@@ -13,9 +13,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import { TYPES } from "@/shared/providers/types";
 import { Container as InversifyContainer } from "inversify";
-import AccountService from "@/modules/account/account.service";
-import { log } from "winston";
-import { Dictionary } from "vue-router/types/router";
+import { AccountService } from "@/modules/account/account.service";
 
 @Component({
   inject: {
@@ -31,17 +29,6 @@ export default class Home extends Vue {
     this._accountService = this.container.get<AccountService>(
       TYPES.AccountService
     );
-
-    const query = this?.$route?.query || {};
-    const params = new URLSearchParams(query as Dictionary<string>);
-    console.log(Array.from(params.keys()));
-
-    if (params.has("code")) {
-      this.code = params.get("code") || "";
-      this._accountService.signInWithSlack(this.code).then((user) => {
-        console.log(user);
-      });
-    }
   }
 }
 </script>
