@@ -23,6 +23,7 @@ export class FirebaseAuthAdapter implements FirebaseAuthentication {
       emailAddress,
       password
     );
+
     const user = this._createUserFromCredential(credential);
     return user;
   }
@@ -44,7 +45,7 @@ export class FirebaseAuthAdapter implements FirebaseAuthentication {
   ): Promise<FirebaseAuthUser> {
     const provider = AuthProvider[providerType];
     if (!provider) {
-      throw new Error("");
+      throw new Error(`Invalid Provider: ${providerType} is not supported.`);
     }
     const credential = this._auth.signInWithPopup(provider);
     const user = await this._createUserFromCredential(credential);
@@ -56,8 +57,9 @@ export class FirebaseAuthAdapter implements FirebaseAuthentication {
   ): Promise<FirebaseAuthUser> {
     try {
       const credential = await credentialPromise;
+
       if (!credential || !credential.user) {
-        throw new Error("No User found");
+        throw new Error("No User found with those credentials");
       }
       const {
         displayName,
