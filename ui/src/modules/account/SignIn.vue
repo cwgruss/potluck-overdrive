@@ -14,6 +14,10 @@
       >
         Slack
       </a>
+
+      <button class="button text-gray-800" v-on:click="signOut">
+        Sign Out
+      </button>
     </div>
     <form action="" class="form create_account__form">
       <fieldset class="fieldset">
@@ -61,6 +65,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { Container as InversifyContainer } from "inversify";
 import { TYPES } from "@/shared/providers/types";
 import { AccountService } from "@/modules/account/account.service";
+import { AccountActions } from "@/shared/api/infrastructure/store/account";
 
 @Component({
   inject: {
@@ -85,11 +90,15 @@ export default class SignIn extends Vue {
   }
 
   handleGoogleSignIn(): void {
-    this.$store.dispatch("sign_in_with_google");
+    this.$store.dispatch(AccountActions.SIGN_IN_WITH_GOOGLE);
   }
 
   handleSlackSignIn(code: string): void {
-    console.log("handleSlackSignIn");
+    this.$store.dispatch(AccountActions.SIGN_IN_WITH_SLACK);
+  }
+
+  signOut(): void {
+    this.$store.dispatch(AccountActions.SIGN_OUT);
   }
 }
 </script>

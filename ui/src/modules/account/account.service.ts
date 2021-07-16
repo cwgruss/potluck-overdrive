@@ -58,4 +58,8 @@ export class AccountService {
     const user = await this._slack.signWithToken(token);
     return user;
   }
+
+  async signOut(): Promise<void> {
+    return this._auth.signOut();
+  }
 }

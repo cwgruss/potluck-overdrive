@@ -3,7 +3,6 @@ import { FirebaseAuthUser } from "@/shared/api/domain/models/FirebaseUser";
 import { TYPES } from "@/shared/providers";
 import { getContainer } from "@/shared/providers/container";
 import { inject, injectable } from "inversify";
-import { Module, MutationTree } from "vuex";
 import {
   VueXActionsFactoryMethod,
   VueXGettersFactoyMethod,
@@ -12,6 +11,7 @@ import {
   VueXMutationsFactoryMethod,
   VueXStateFactoyMethod,
 } from "../vuex.factory";
+
 import { AccountCache } from "./account.cache";
 
 enum AccountMutationTypes {
@@ -36,6 +36,11 @@ export interface RootState {
   account: AccountState;
 }
 
+const AUTH_REQUEST = "AUTH_REQUEST";
+const AUTH_SUCCESS = "AUTH_SUCCESS";
+const AUTH_ERROR = "AUTH_ERROR";
+const AUTH_SIGN_OUT = "AUTH_SIGN_OUT";
+
 @injectable()
 class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
   constructor(
@@ -55,7 +60,6 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
     return initialState;
   };
 
-  // getters
   createGetters: VueXGettersFactoyMethod<AccountState, RootState> = (
     state: AccountState
   ) => {
@@ -73,25 +77,46 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
   };
 
   createActions: VueXActionsFactoryMethod<AccountState, RootState> = () => {
-    const service = this._account;
-    const cache = this._cache;
     return {
-      sign_in_with_google({ commit }): Promise<FirebaseAuthUser> {
+      signInWithGoogle: ({ commit }): Promise<FirebaseAuthUser> => {
         return new Promise((resolve, reject) => {
-          commit("auth_request");
-          service
+          commit(AUTH_REQUEST);
+          this._account
             .signInWithGoogle()
             .then((user) => {
-              commit("auth_success", {
+              commit(AUTH_SUCCESS, {
                 token: user.id.toString(),
                 user,
               });
               resolve(user);
             })
             .catch((err) => {
-              commit("auth_error");
+              commit(AUTH_ERROR);
               reject(err);
             });
+        });
+      },
+      signInWithSlack: ({ commit }, code: string): Promise<any> => {
+        return new Promise((resolve, reject) => {
+          commit(AUTH_REQUEST);
+          this._account
+            .signInWithSlack(code)
+            .then((user) => {
+              commit(AUTH_SUCCESS, {
+                token: user.id.toString(),
+                user,
+              });
+              resolve(user);
+            })
+            .catch((err) => {
+              commit(AUTH_ERROR);
+              reject(err);
+            });
+        });
+      },
+      signOut: ({ commit }): Promise<void> => {
+        return this._account.signOut().then(() => {
+          commit(AUTH_SIGN_OUT);
         });
       },
     };
@@ -100,26 +125,34 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
   createMutations: VueXMutationsFactoryMethod<AccountState> = (
     state: AccountState
   ) => {
-    const cache = this._cache;
     return {
-      auth_request(state: AccountState) {
+      [AUTH_REQUEST]: (state: AccountState) => {
         state.status = "loading";
       },
-      auth_success(
+      [AUTH_SUCCESS]: (
         state: AccountState,
         payload: { token: string; user: FirebaseAuthUser }
-      ) {
-        cache.setIsSignedIn(true);
-        cache.setToken(payload.token);
+      ) => {
+        this._cache.setIsSignedIn(true);
+        this._cache.setToken(payload.token);
         state.status = "success";
         state.token = payload.token;
         state.user = {
           uid: payload.user.id.toString(),
         };
       },
-      auth_error(state: AccountState) {
-        cache.clear();
+      [AUTH_ERROR]: (state: AccountState) => {
+        this._cache.clearAll();
         state.status = "error";
+      },
+      [AUTH_SIGN_OUT]: (state: AccountState) => {
+        this._cache.clearAll();
+        state.token = "";
+        state.user = null;
+        state.status = "logged-out";
+        state.isSignedIn = false;
+        this._cache.setIsSignedIn(false);
+        this._cache.setToken(null);
       },
     };
   };
@@ -127,10 +160,11 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
   createModule: VueXModuleFactoryMethod<AccountState, RootState> = () => {
     const state = this.createInitialState();
     const getters = this.createGetters(state);
-    const actions = this.createActions();
+    const actions = this.createActions(state);
     const mutations = this.createMutations(state);
 
     return {
+      namespaced: true,
       state,
       getters,
       actions,
@@ -138,32 +172,5 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
     };
   };
 }
-
-// actions
-// const createAccountActions: VueXActionsFactoryMethod<AccountState, RootState> =
-//   () => {
-//     const actions = {};
-//     return actions;
-//   };
-
-// mutations
-// interface AccountMutations {
-//   [AccountMutationTypes.SET_IS_SIGNED_IN](
-//     state: AccountState,
-//     isSignedIn: boolean
-//   ): void;
-// }
-// const createAccountMutations: VueXMutationsFactoryMethod<AccountState> = () => {
-//   const mutations: MutationTree<AccountState> & AccountMutations = {
-//     [AccountMutationTypes.SET_IS_SIGNED_IN](
-//       state: AccountState,
-//       isSignedIn: boolean
-//     ): void {
-//       state.isSignedIn = isSignedIn;
-//     },
-//   };
-
-//   return mutations;
-// };
 
 export const accountVueXModule = getContainer().resolve(VueXAccountModule);

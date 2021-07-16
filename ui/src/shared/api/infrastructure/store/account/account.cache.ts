@@ -25,7 +25,11 @@ export class AccountCache extends AbstractStorage<AccountCacheKeys> {
     this.setItem(AccountCacheKeys.IS_SIGNED_IN, bool.toString());
   }
 
-  public setToken(token: string): void {
+  public setToken(token: string | null): void {
+    if (!token) {
+      this.clearItems([AccountCacheKeys.USER_JWT]);
+      return;
+    }
     this.setItem(AccountCacheKeys.USER_JWT, token);
   }
 
@@ -33,7 +37,7 @@ export class AccountCache extends AbstractStorage<AccountCacheKeys> {
     return this.getItem(AccountCacheKeys.USER_JWT);
   }
 
-  public clear() {
+  public clearAll() {
     this.clearItems([AccountCacheKeys.IS_SIGNED_IN]);
   }
 }

@@ -14,7 +14,7 @@ import { TYPES } from "../../shared/providers/types";
   },
   computed: {
     isSignedIn() {
-      console.log(this.$store);
+      console.log(this.$store.state.account.isSignedIn);
 
       return this.$store.state.account.isSignedIn ? "true" : "false";
     },
