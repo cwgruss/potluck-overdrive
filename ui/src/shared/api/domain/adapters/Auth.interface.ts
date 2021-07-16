@@ -1,4 +1,4 @@
-import FirebaseAuthUser from "../models/FirebaseUser";
+import { FirebaseAuthUser } from "../models/FirebaseUser";
 import { FirebaseAuthProviderTypes } from "../repositories/AuthProvider.interface";
 
 export interface FirebaseAuthentication {

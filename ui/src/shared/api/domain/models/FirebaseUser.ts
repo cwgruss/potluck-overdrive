@@ -1,10 +1,9 @@
-import firebase from "firebase/app";
 import { Entity } from "../util/Entity";
 import { UniqueEntityID } from "../util/UniqueEntityID";
 import { EmailAddress } from "./EmailAddress";
 import { OAuthUserProps } from "./OauthUserProps";
 
-export default class FirebaseAuthUser extends Entity<OAuthUserProps> {
+export class FirebaseAuthUser extends Entity<OAuthUserProps> {
   get id(): UniqueEntityID {
     return this._id;
   }

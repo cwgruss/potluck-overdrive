@@ -85,11 +85,11 @@ export default class SignIn extends Vue {
   }
 
   handleGoogleSignIn(): void {
-    this._accountService?.signInWithGoogle();
+    this.$store.dispatch("sign_in_with_google");
   }
 
   handleSlackSignIn(code: string): void {
-    this._accountService?.signInWithSlack(code);
+    console.log("handleSlackSignIn");
   }
 }
 </script>

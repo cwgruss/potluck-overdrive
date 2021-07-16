@@ -18,6 +18,7 @@ import {
   FirebaseAuthAdapter,
   SlackAuthAdapter,
 } from "@/shared/api/infrastructure/adapters";
+import { AccountCache } from "../api/infrastructure/store/account/account.cache";
 const INVERSIFY_CONFIG = {
   autoBindInjectable: true,
   defaultScope: BindingScopeEnum.Singleton,
@@ -27,6 +28,7 @@ export const typeMap: ReadonlyMap<
   ServiceIdentifier<any>,
   Newable<any>
 > = new Map<ServiceIdentifier<any>, Newable<any>>([
+  [TYPES.AccountCache, AccountCache],
   [TYPES.FirebaseAuth, FirebaseAuthAdapter],
   [TYPES.SlackAuth, SlackAuthAdapter],
   [TYPES.AccountService, AccountService],
@@ -36,7 +38,10 @@ let container: Nullable<InversifyContainer> = createContainer();
 export let lazyInject: ReturnType<typeof getDecorators>;
 
 function bindDependency<T>(typeId: ServiceIdentifier<T>, type?: Newable<T>) {
-  container!.bind<any>(typeId).to(type || typeMap.get(typeId)!);
+  container!
+    .bind<any>(typeId)
+    .to(type || typeMap.get(typeId)!)
+    .inSingletonScope();
 }
 
 export function getContainer() {

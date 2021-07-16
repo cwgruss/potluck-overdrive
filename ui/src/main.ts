@@ -9,14 +9,9 @@ import { auth } from "./firebase";
 
 Vue.config.productionTip = false;
 
-let app: Vue;
-auth.onAuthStateChanged(() => {
-  if (!app) {
-    console.log("Create new Vue App");
-    app = new Vue({
-      router,
-      store,
-      render: (h) => h(App),
-    }).$mount("#app");
-  }
-});
+console.log("Create new Vue App");
+new Vue({
+  router,
+  store,
+  render: (h) => h(App),
+}).$mount("#app");
