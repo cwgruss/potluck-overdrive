@@ -14,10 +14,6 @@ import {
 
 import { AccountCache } from "./account.cache";
 
-enum AccountMutationTypes {
-  SET_IS_SIGNED_IN = "SET_IS_SIGNED_IN",
-}
-
 export interface AccountState {
   status: string;
   /**
@@ -96,11 +92,14 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
             });
         });
       },
-      signInWithSlack: ({ commit }, code: string): Promise<any> => {
+      signInWithSlack: (
+        { commit },
+        payload: { code: string }
+      ): Promise<any> => {
         return new Promise((resolve, reject) => {
           commit(AUTH_REQUEST);
           this._account
-            .signInWithSlack(code)
+            .signInWithSlack(payload.code)
             .then((user) => {
               commit(AUTH_SUCCESS, {
                 token: user.id.toString(),

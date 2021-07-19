@@ -7,13 +7,13 @@
         Google
       </button>
 
-      <a
+      <!-- <a
         class="button text-gray-800"
         target="_blank"
         v-bind:href="slackSignInURL"
       >
         Slack
-      </a>
+      </a> -->
 
       <button class="button text-gray-800" v-on:click="signOut">
         Sign Out
@@ -65,7 +65,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { Container as InversifyContainer } from "inversify";
 import { TYPES } from "@/shared/providers/types";
 import { AccountService } from "@/modules/account/account.service";
-import { AccountActions } from "@/shared/api/infrastructure/store/account";
+import { AccountVueXStateProxy } from "@/shared/api/infrastructure/store/account";
 
 @Component({
   inject: {
@@ -75,30 +75,22 @@ import { AccountActions } from "@/shared/api/infrastructure/store/account";
 export default class SignIn extends Vue {
   container!: InversifyContainer;
   private _accountService?: AccountService;
+  _stateProxy: AccountVueXStateProxy;
 
-  get slackSignInURL(): string {
-    if (!this._accountService) {
-      throw new Error("");
-    }
-    return this._accountService.slackSignInURL;
+  created() {
+    this._stateProxy = new AccountVueXStateProxy();
+    console.log(this._stateProxy);
   }
-
-  created(): void {
-    this._accountService = this.container.get<AccountService>(
-      TYPES.AccountService
-    );
-  }
-
   handleGoogleSignIn(): void {
-    this.$store.dispatch(AccountActions.SIGN_IN_WITH_GOOGLE);
+    this._stateProxy.signInWithGoogle();
   }
 
   handleSlackSignIn(code: string): void {
-    this.$store.dispatch(AccountActions.SIGN_IN_WITH_SLACK);
+    this._stateProxy.signInWithSlack(code);
   }
 
   signOut(): void {
-    this.$store.dispatch(AccountActions.SIGN_OUT);
+    this._stateProxy.signOut();
   }
 }
 </script>
