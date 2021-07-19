@@ -75,7 +75,7 @@ import { AccountVueXStateProxy } from "@/shared/api/infrastructure/store/account
 export default class SignIn extends Vue {
   container!: InversifyContainer;
   private _accountService?: AccountService;
-  _stateProxy: AccountVueXStateProxy;
+  _stateProxy!: AccountVueXStateProxy;
 
   created() {
     this._stateProxy = new AccountVueXStateProxy();
