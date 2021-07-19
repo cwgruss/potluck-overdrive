@@ -21,7 +21,16 @@ const format = winston.format.combine(
   winston.format.colorize({ all: true }),
   winston.format.printf(
     (info) => `${info.timestamp} ${info.level}: ${info.message}`
-  )
+  ),
+  winston.format.errors((info: unknown) => {
+    if (info instanceof Error) {
+      return Object.assign({}, info, {
+        stack: info.stack,
+        message: info.message,
+      });
+    }
+    return info;
+  })
 );
 
 const transports = [new winston.transports.Console()];
