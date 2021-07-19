@@ -81,6 +81,7 @@ export default class SignIn extends Vue {
     this._stateProxy = new AccountVueXStateProxy();
     console.log(this._stateProxy);
   }
+
   handleGoogleSignIn(): void {
     this._stateProxy.signInWithGoogle();
   }
