@@ -32,7 +32,7 @@ let Container: Nullable<InversifyContainer> = getContainer();
 })
 export default class App extends Vue {
   created() {
-    console.log("App Created");
+    throw new Error("App Initialized");
   }
 }
 </script>
