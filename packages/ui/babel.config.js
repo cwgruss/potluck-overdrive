@@ -5,5 +5,6 @@ module.exports = {
       retainLines: true,
     },
   },
+
   presets: ["@vue/cli-plugin-babel/preset"],
 };

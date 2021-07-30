@@ -20,6 +20,7 @@ import {
 } from "@/shared/api/infrastructure/adapters";
 import { AccountCache } from "../api/infrastructure/store/account/account.cache";
 import { AccountVueXStateProxy } from "../api/infrastructure/store/account/account.repository";
+import { IngredientsCache } from "../api/infrastructure/store/ingredients/ingredients.cache";
 const INVERSIFY_CONFIG = {
   autoBindInjectable: true,
   defaultScope: BindingScopeEnum.Singleton,
@@ -30,6 +31,7 @@ export const typeMap: ReadonlyMap<
   Newable<any>
 > = new Map<ServiceIdentifier<any>, Newable<any>>([
   [TYPES.AccountCache, AccountCache],
+  [TYPES.IngredientsCache, IngredientsCache],
   [TYPES.FirebaseAuth, FirebaseAuthAdapter],
   [TYPES.SlackAuth, SlackAuthAdapter],
   [TYPES.AccountService, AccountService],

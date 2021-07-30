@@ -11,7 +11,7 @@ import {
   VueXMutationsFactoryMethod,
   VueXStateFactoyMethod,
 } from "../vuex.factory";
-
+import { RootState } from "../root";
 import { AccountCache } from "./account.cache";
 
 export interface AccountState {
@@ -26,10 +26,6 @@ export interface AccountState {
   user: {
     uid: string;
   } | null;
-}
-
-export interface RootState {
-  account: AccountState;
 }
 
 const AUTH_REQUEST = "AUTH_REQUEST";

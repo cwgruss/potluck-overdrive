@@ -1,16 +1,16 @@
 import Vue from "vue";
 import Vuex, { Module, Store } from "vuex";
-import { AccountState, accountVueXModule } from "./account/account.store";
+import { accountVueXModule } from "./account/account.store";
+import { ingredientsVueXModule } from "./ingredients/ingredients.store";
 
 const debug = process.env.NODE_ENV !== "production";
 
 Vue.use(Vuex);
 
-interface RootState {
-  modules: { account: AccountState };
-}
-
 export default new Vuex.Store({
-  modules: { account: accountVueXModule.createModule() },
+  modules: {
+    account: accountVueXModule.createModule(),
+    ingredients: ingredientsVueXModule.createModule(),
+  },
   strict: debug,
 });
