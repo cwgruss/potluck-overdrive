@@ -4,11 +4,12 @@ services:
   ui:
     build: ./packages/ui
     container_name: potluck-overdrive-ui
+    env_file: .env
     volumes:
       - "static:/app/dist"
-  app:
+  web:
     build: ./packages/server/
-    container_name: potluck-overdrive-server
+    env_file: .env
     volumes:
       - "static:/app/public"
     ports:

@@ -16,7 +16,7 @@ RUN npm run build
 RUN npm ci --production
 
 
-# --- Production Image ---
+# --- Server Image ---
 # --------------------------------------------
 FROM node:16 as production
 ENV NODE_ENV=production
