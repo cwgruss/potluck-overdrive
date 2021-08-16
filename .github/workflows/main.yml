@@ -42,14 +42,14 @@ jobs:
         run: |
           echo "Setup Environment & Install Dependencies,"
           echo "Installing Node Dependencies."
-          npm ci --prefix ./ui
+          npm ci --prefix ./packages/ui
 
       - name: Run Unit Tests
         run: |
           echo "Running Unit Tests"
-          npm run test:unit --prefix ./ui
+          npm run test:unit --prefix ./packages/ui
 
       - name: Run Build
         run: |
           echo "Running Build"
-          npm run build --prefix ./ui
+          npm run build --prefix ./packages/ui
