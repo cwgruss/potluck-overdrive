@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  ui:
+    build: ./packages/ui
+    container_name: potluck-overdrive-ui
+    volumes:
+      - "static:/app/dist"
+  app:
+    build: ./packages/server/
+    container_name: potluck-overdrive-server
+    volumes:
+      - "static:/app/public"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - ui
+
+volumes:
+  static:
