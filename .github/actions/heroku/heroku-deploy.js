@@ -50,11 +50,11 @@ const CONTAINER_DEPLOY_CMD = `heroku container:push`;
 const CONTAINER_RELEASE_CMD = `heroku container:push`;
 
 const herokuLogin = ({ email, api_key }) => {
-  execSync(createCatFile({ email, api_key }));
+  execSync(createCatFile({ email, api_key }), { stdio: "inherit" });
   console.log("Created and wrote to ~/.netrc");
 
   console.log("1. Logging into Heroku ...");
-  execSync(`${LOGIN_CMD}`);
+  execSync(`${LOGIN_CMD}`, { stdio: "inherit" });
   console.log("Successfully logged into heroku");
 };
 
@@ -68,7 +68,10 @@ const deployDockerImage = ({
   console.log("2. Building Docker Image ...");
   execSync(
     `${CONTAINER_DEPLOY_CMD} ${dockerHerokuProcessType} --app ${app_name} ${dockerBuildArgs}`,
-    appdir ? { cwd: appdir } : null
+    {
+      stdio: "inherit",
+      cwd: appdir || null,
+    }
   );
 };
 
@@ -82,7 +85,10 @@ const releaseDockerImage = ({
   console.log("3. Releasing Image to ", app_name);
   execSync(
     `${CONTAINER_RELEASE_CMD} ${dockerHerokuProcessType} --app ${app_name} ${dockerBuildArgs}`,
-    appdir ? { cwd: appdir } : null
+    {
+      stdio: "inherit",
+      cwd: appdir || null,
+    }
   );
 };
 
