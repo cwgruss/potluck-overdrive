@@ -73,6 +73,8 @@ jobs:
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           usedocker: true
+          branch: main
+          dontuseforce: true
           docker_build_args: |
             NODE_ENV
             VUE_APP_FIREBASE_API_KEY
