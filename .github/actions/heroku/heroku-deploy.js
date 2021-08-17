@@ -47,7 +47,7 @@ if (heroku.dockerBuildArgs) {
 
 const LOGIN_CMD = `heroku container:login`;
 const CONTAINER_DEPLOY_CMD = `heroku container:push`;
-const CONTAINER_RELEASE_CMD = `heroku container:push`;
+const CONTAINER_RELEASE_CMD = `heroku container:release`;
 
 const herokuLogin = ({ email, api_key }) => {
   execSync(createCatFile({ email, api_key }), { stdio: "inherit" });
