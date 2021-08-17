@@ -73,7 +73,7 @@ const releaseDockerImage = ({
   );
 };
 
-(async () => {
+(async (heroku) => {
   try {
     herokuLogin();
     deployDockerImage({ ...heroku });
@@ -83,11 +83,11 @@ const releaseDockerImage = ({
       "status",
       "Successfully deployed heroku app from branch " + heroku.branch
     );
-  } catch (error) {
-    console.error(`Error: Unable to deploy branch "${branch}": ${err}`);
+  } catch (err) {
+    console.error(`Error: Unable to deploy branch "${heroku.branch}": ${err}`);
     core.setFailed(
       "status",
       "Failed to deploy heroku app from branch " + heroku.branch
     );
   }
-})();
+})(heroku);
