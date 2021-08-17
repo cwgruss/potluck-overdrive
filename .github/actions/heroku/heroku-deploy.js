@@ -1,4 +1,5 @@
 const core = require("@actions/core");
+const { execSync } = require("child_process");
 
 const heroku = {
   api_key: core.getInput("heroku_api_key"),
@@ -10,7 +11,7 @@ const heroku = {
   healthcheck: core.getInput("healthcheck"),
   checkstring: core.getInput("checkstring"),
   env_file: core.getInput("env_file"),
-  appdir: core.getInput(""),
+  appdir: core.getInput("appdir"),
 };
 
 // Formatting
