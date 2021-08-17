@@ -11,8 +11,17 @@ const heroku = {
   healthcheck: core.getInput("healthcheck"),
   checkstring: core.getInput("checkstring"),
   env_file: core.getInput("env_file"),
-  appdir: core.getInput("appdir"),
+  appdir: core.getInput("appdirl"),
 };
+
+const createCatFile = ({ email, api_key }) => `cat >~/.netrc <<EOF
+machine api.heroku.com
+    login ${email}
+    password ${api_key}
+machine git.heroku.com
+    login ${email}
+    password ${api_key}
+EOF`;
 
 // Formatting
 if (heroku.appdir) {
@@ -40,7 +49,10 @@ const LOGIN_CMD = `heroku container:login`;
 const CONTAINER_DEPLOY_CMD = `heroku container:push`;
 const CONTAINER_RELEASE_CMD = `heroku container:push`;
 
-const herokuLogin = () => {
+const herokuLogin = ({ email, api_key }) => {
+  execSync(createCatFile({ email, api_key }));
+  console.log("Created and wrote to ~/.netrc");
+
   console.log("1. Logging into Heroku ...");
   execSync(`${LOGIN_CMD}`);
   console.log("Successfully logged into heroku");
@@ -76,7 +88,7 @@ const releaseDockerImage = ({
 
 (async (heroku) => {
   try {
-    herokuLogin();
+    herokuLogin({ ...heroku });
     deployDockerImage({ ...heroku });
     releaseDockerImage({ ...heroku });
 
