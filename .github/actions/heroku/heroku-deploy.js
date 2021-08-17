@@ -83,10 +83,13 @@ const releaseDockerImage = ({
   appdir,
 }) => {
   console.log("3. Releasing Image to ", app_name);
-  execSync(`${CONTAINER_RELEASE_CMD} ${dockerHerokuProcessType}`, {
-    stdio: "inherit",
-    cwd: appdir || null,
-  });
+  execSync(
+    `${CONTAINER_RELEASE_CMD} ${dockerHerokuProcessType} --app=${app_name}`,
+    {
+      stdio: "inherit",
+      cwd: appdir || null,
+    }
+  );
   console.log("Released.");
 };
 
