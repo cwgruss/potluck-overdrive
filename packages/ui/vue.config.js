@@ -1,16 +1,23 @@
 const path = require("path");
 
-module.exports = {
-  configureWebpack: {
-    devtool: "source-map",
-  },
-  chainWebpack: (config) => {
-    const types = ["vue-modules", "vue", "normal-modules", "normal"];
-    types.forEach((type) =>
-      addStyleResource(config.module.rule("scss").oneOf(type))
-    );
-  },
-};
+const PrerenderSpaPlugin = require("prerender-spa-plugin");
+
+const productionPlugins = [
+  new PrerenderSpaPlugin({
+    staticDir: path.join(__dirname, "dist"),
+    routes: ["/", "/about"],
+    renderer: new PrerenderSpaPlugin.PuppeteerRenderer({
+      // We need to inject a value so we're able to
+      // detect if the page is currently pre-rendered.
+      inject: {},
+      // Our view component is rendered after the API
+      // request has fetched all the necessary data,
+      // so we create a snapshot of the page after the
+      // `data-view` attribute exists in the DOM.
+      renderAfterElementExists: "[data-view]",
+    }),
+  }),
+];
 
 function addStyleResource(rule) {
   rule
@@ -20,3 +27,18 @@ function addStyleResource(rule) {
       patterns: [path.resolve(__dirname, "./src/scss/abstracts/_main.scss")],
     });
 }
+
+module.exports = {
+  configureWebpack: (config) => {
+    if (process.env.NODE_ENV === "production") {
+      config.plugins.push(...productionPlugins);
+    }
+    config.devtool = "source-map";
+  },
+  chainWebpack: (config) => {
+    const types = ["vue-modules", "vue", "normal-modules", "normal"];
+    types.forEach((type) =>
+      addStyleResource(config.module.rule("scss").oneOf(type))
+    );
+  },
+};

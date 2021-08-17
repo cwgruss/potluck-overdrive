@@ -9,6 +9,11 @@ import { intializeSentry } from "@/shared/core/logger/sentry.config";
 
 Vue.config.productionTip = false;
 
+// During pre-rendering the initial state is
+// injected into the global scope, here we
+// fill the store with the initial state.
+if (window.__INITIAL_STATE__) store.replaceState(window.__INITIAL_STATE__);
+
 intializeSentry().then(() => {
   console.log(Vue);
 
