@@ -75,6 +75,7 @@ jobs:
           usedocker: true
           branch: main
           dontuseforce: false
+          docker_heroku_process_type: web
           docker_build_args: |
             NODE_ENV
             VUE_APP_FIREBASE_API_KEY
