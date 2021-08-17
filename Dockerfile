@@ -2,6 +2,14 @@
 # --------------------------------------------
 FROM node:16 as ui
 
+ARG VUE_APP_FIREBASE_API_KEY=""
+ARG VUE_APP_FIREBASE_AUTH_DOMAIN=""
+ARG VUE_APP_FIREBASE_PROJECT_ID=""
+ARG VUE_APP_FIREBASE_STORAGE_BUCKET=""
+ARG VUE_APP_FIREBASE_MESSAGING_SENDER_ID=""
+ARG VUE_APP_FIREBASE_APP_ID=""
+ARG VUE_APP_FIREBASE_MEASUREMENT_ID=""
+
 WORKDIR /app
 
 COPY ["./packages/ui/package.json", "./packages/ui/package-lock.json*", "./"]

@@ -75,13 +75,7 @@ const deployDockerImage = ({
   );
 };
 
-const releaseDockerImage = ({
-  app_name,
-  branch,
-  dockerHerokuProcessType,
-  dockerBuildArgs,
-  appdir,
-}) => {
+const releaseDockerImage = ({ app_name, dockerHerokuProcessType, appdir }) => {
   console.log("3. Releasing Image to ", app_name);
   execSync(
     `${CONTAINER_RELEASE_CMD} ${dockerHerokuProcessType} --app=${app_name}`,
