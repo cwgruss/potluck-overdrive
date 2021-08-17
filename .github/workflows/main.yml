@@ -79,6 +79,7 @@ jobs:
             VUE_APP_FIREBASE_STORAGE_BUCKET
             VUE_APP_SLACK_CLIENT_ID
         env:
+          NODE_ENV: production
           VUE_APP_FIREBASE_API_KEY: ${{ secrets.VUE_APP_FIREBASE_API_KEY }}
           VUE_APP_FIREBASE_APP_ID: ${{ secrets.VUE_APP_FIREBASE_APP_ID }}
           VUE_APP_FIREBASE_AUTH_DOMAIN: ${{ secrets.VUE_APP_FIREBASE_AUTH_DOMAIN }}
