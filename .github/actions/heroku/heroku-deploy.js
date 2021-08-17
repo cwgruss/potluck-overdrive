@@ -83,13 +83,11 @@ const releaseDockerImage = ({
   appdir,
 }) => {
   console.log("3. Releasing Image to ", app_name);
-  execSync(
-    `${CONTAINER_RELEASE_CMD} ${dockerHerokuProcessType} --app ${app_name} ${dockerBuildArgs}`,
-    {
-      stdio: "inherit",
-      cwd: appdir || null,
-    }
-  );
+  execSync(`${CONTAINER_RELEASE_CMD} ${dockerHerokuProcessType}`, {
+    stdio: "inherit",
+    cwd: appdir || null,
+  });
+  console.log("Released.");
 };
 
 (async (heroku) => {
@@ -98,6 +96,7 @@ const releaseDockerImage = ({
     deployDockerImage({ ...heroku });
     releaseDockerImage({ ...heroku });
 
+    console.log("\nDone.\n");
     core.setOutput(
       "status",
       "Successfully deployed heroku app from branch " + heroku.branch
