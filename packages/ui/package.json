@@ -7,7 +7,8 @@
     "build": "npx vue-cli-service build",
     "test:unit": "npx vue-cli-service test:unit ",
     "test:e2e": "npx vue-cli-service test:e2e",
-    "lint": "npx vue-cli-service lint"
+    "lint": "npx vue-cli-service lint",
+    "build-report": "vue-cli-service build --report"
   },
   "dependencies": {
     "@sentry/tracing": "^6.9.0",
@@ -15,7 +16,7 @@
     "@types/uuid": "^8.3.1",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
-    "firebase": "^8.7.1",
+    "firebase": "^8.9.1",
     "inversify": "^5.1.1",
     "inversify-inject-decorators": "^3.1.0",
     "reflect-metadata": "^0.1.13",
