@@ -58,7 +58,7 @@ jobs:
   deploy:
     name: "Deploy to Heroku"
     runs-on: ubuntu-latest
-    environment: production
+    environment: Production
     needs: [build]
     steps:
       # Runs a single command using the runners shell
