@@ -43,8 +43,6 @@ if (heroku.dockerBuildArgs) {
   heroku.dockerBuildArgs = heroku.dockerBuildArgs
     ? `--arg ${heroku.dockerBuildArgs}`
     : "";
-
-  console.log(heroku.dockerBuildArgs);
 }
 
 const LOGIN_CMD = `heroku container:login`;
