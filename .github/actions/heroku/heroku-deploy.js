@@ -1,4 +1,5 @@
 const core = require("@actions/core");
+const github = require("@actions/github");
 const { execSync } = require("child_process");
 
 const heroku = {
@@ -36,10 +37,7 @@ if (heroku.appdir) {
 // Collate docker build args into arg list
 if (heroku.dockerBuildArgs) {
   const args = heroku.dockerBuildArgs && heroku.dockerBuildArgs.split("\n");
-  console.log(
-    "VUE_APP_FIREBASE_AUTH_DOMAIN",
-    process.env["VUE_APP_FIREBASE_AUTH_DOMAIN"]
-  );
+  const env = github.console.log("TEST_VAR", process.env["TEST_VAR"]);
   console.log(args);
   heroku.dockerBuildArgs = heroku.dockerBuildArgs
     .split("\n")
