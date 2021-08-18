@@ -37,7 +37,7 @@ if (heroku.appdir) {
 // Collate docker build args into arg list
 if (heroku.dockerBuildArgs) {
   const args = heroku.dockerBuildArgs && heroku.dockerBuildArgs.split("\n");
-  const env = github.console.log("TEST_VAR", process.env["TEST_VAR"]);
+  console.log("TEST_VAR", process.env["TEST_VAR"]);
   console.log(args);
   heroku.dockerBuildArgs = heroku.dockerBuildArgs
     .split("\n")
