@@ -35,6 +35,13 @@ if (heroku.appdir) {
 
 // Collate docker build args into arg list
 if (heroku.dockerBuildArgs) {
+  const args = heroku.dockerBuildArgs && heroku.dockerBuildArgs.split("\n");
+  console.log(`Docker build args: ${lengthOfArgs || 0}`);
+  console.log(
+    "VUE_APP_FIREBASE_AUTH_DOMAIN",
+    process.env["VUE_APP_FIREBASE_AUTH_DOMAIN"]
+  );
+  console.log(args);
   heroku.dockerBuildArgs = heroku.dockerBuildArgs
     .split("\n")
     .map((arg) => `${arg}="${process.env[arg]}"`)
