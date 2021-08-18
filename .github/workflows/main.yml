@@ -70,7 +70,7 @@ jobs:
         uses: ./.github/actions/heroku
         env:
           NODE_ENV: production
-          TEST_VAR: "Carter Gruss"
+          TEST_VAR: ${{ secrets.TEST_VAR }}
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           VUE_APP_FIREBASE_API_KEY: ${{ secrets.VUE_APP_FIREBASE_API_KEY }}
           VUE_APP_FIREBASE_APP_ID: ${{ secrets.VUE_APP_FIREBASE_APP_ID }}
