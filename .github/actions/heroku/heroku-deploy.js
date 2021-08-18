@@ -39,7 +39,7 @@ if (heroku.dockerBuildArgs) {
   console.log(`Docker build args: ${lengthOfArgs || 0}`);
   console.log(
     "VUE_APP_FIREBASE_AUTH_DOMAIN",
-    env["VUE_APP_FIREBASE_AUTH_DOMAIN"]
+    proces.env["VUE_APP_FIREBASE_AUTH_DOMAIN"]
   );
   heroku.dockerBuildArgs = heroku.dockerBuildArgs
     .split("\n")
