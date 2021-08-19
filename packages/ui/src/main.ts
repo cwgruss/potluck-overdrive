@@ -15,11 +15,12 @@ Vue.config.productionTip = false;
 if (window.__INITIAL_STATE__) store.replaceState(window.__INITIAL_STATE__);
 
 intializeSentry().then(() => {
-  console.log(Vue);
-
   new Vue({
     router,
     store,
     render: (h) => h(App),
+    mounted() {
+      document.dispatchEvent(new Event("render-event"));
+    },
   }).$mount("#app");
 });
