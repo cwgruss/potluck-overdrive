@@ -91,8 +91,12 @@ export default class SignIn extends Vue {
   }
 
   handleGoogleSignIn(): void {
-    this._stateProxy.signInWithGoogle().catch((err) => {
-      console.log(err);
+    this._stateProxy.signInWithGoogle().then((result) => {
+      if (result.isFail()) {
+        alert(result.unwrapFail());
+        return;
+      }
+      console.log(result.unwrap());
     });
   }
 
@@ -102,7 +106,15 @@ export default class SignIn extends Vue {
     event: Event
   ): void {
     event.preventDefault();
-    this._stateProxy.signInWithEmailAndPassword(emailAddress, password);
+    this._stateProxy
+      .signInWithEmailAndPassword(emailAddress, password)
+      .then((result) => {
+        if (result.isFail()) {
+          alert(result.unwrapFail());
+          return;
+        }
+        console.log(result.unwrap());
+      });
   }
 
   handleSlackSignIn(code: string): void {

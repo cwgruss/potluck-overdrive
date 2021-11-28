@@ -107,16 +107,15 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
             .then((result) => {
               if (result.isFail()) {
                 commit(AUTH_ERROR);
-                const err = result.unwrapFail();
-                return reject(err);
+              } else {
+                const user = result.unwrap();
+                commit(AUTH_SUCCESS, {
+                  token: user.id.toString(),
+                  user,
+                });
               }
 
-              const user = result.unwrap();
-              commit(AUTH_SUCCESS, {
-                token: user.id.toString(),
-                user,
-              });
-              resolve(user);
+              resolve(result);
             })
             .catch((err) => {
               commit(AUTH_ERROR);
@@ -127,7 +126,7 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
       signInWithEmailAndPassword: (
         { commit },
         payload: { emailAddress: string; password: string }
-      ): Promise<FirebaseAuthUser> => {
+      ): Promise<Result<FirebaseAuthUser, Error>> => {
         return new Promise((resolve, reject) => {
           const { emailAddress, password } = payload;
           this._account
@@ -135,17 +134,16 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
             .then((result) => {
               if (result.isFail()) {
                 commit(AUTH_ERROR);
-                const err = result.unwrapFail();
-                return reject(err);
+              } else {
+                const user = result.unwrap();
+
+                commit(AUTH_SUCCESS, {
+                  token: user.id.toString(),
+                  user,
+                });
               }
 
-              const user = result.unwrap();
-
-              commit(AUTH_SUCCESS, {
-                token: user.id.toString(),
-                user,
-              });
-              resolve(user);
+              resolve(result);
             });
         });
       },

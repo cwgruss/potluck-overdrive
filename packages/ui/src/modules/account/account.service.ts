@@ -36,32 +36,24 @@ export class AccountService {
     emailAddress: string,
     password: string
   ): Promise<Result<FirebaseAuthUser, Error>> {
-    try {
-      const user = await this._firebase.registerUserWithEmailAndPassword(
-        emailAddress,
-        password
-      );
+    const user = await this._firebase.registerUserWithEmailAndPassword(
+      emailAddress,
+      password
+    );
 
-      return user;
-    } catch (error) {
-      return Result.fail(error as Error);
-    }
+    return user;
   }
 
   async signInWithEmailAndPassword(
     emailAddress: string,
     password: string
   ): Promise<Result<FirebaseAuthUser, Error>> {
-    try {
-      const user = await this._firebase.signInWithEmailAndPassword(
-        emailAddress,
-        password
-      );
+    const user = await this._firebase.signInWithEmailAndPassword(
+      emailAddress,
+      password
+    );
 
-      return user;
-    } catch (error) {
-      return Result.fail(error as Error);
-    }
+    return user;
   }
 
   async signInWithGoogle(): Promise<Result<FirebaseAuthUser, Error>> {

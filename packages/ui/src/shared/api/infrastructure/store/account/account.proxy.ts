@@ -5,6 +5,8 @@ import { User } from "@/shared/api/domain/models/user/User";
 import { AccountService } from "@/modules/account";
 import { Maybe } from "@/shared/core/monads/maybe/maybe";
 import { Result } from "@/shared/core/monads/result";
+import { FirebaseAuthUser } from "@/shared/api/domain/models/user/FirebaseUser";
+import SlackAuthUser from "@/shared/api/domain/models/user/SlackUser";
 
 @injectable()
 export class AccountVueXStateProxy {
@@ -17,37 +19,22 @@ export class AccountVueXStateProxy {
     });
   }
 
-  signInWithGoogle(): Promise<User> {
-    return new Promise((resolve, reject) => {
-      store
-        .dispatch(AccountActions.SIGN_IN_WITH_GOOGLE)
-        .then((result: Result<User, Error>) => {
-          if (result.isFail()) {
-            return reject(result.unwrapFail());
-          }
-          return resolve(result.unwrap());
-        });
-    });
+  signInWithGoogle(): Promise<Result<User, Error>> {
+    return store.dispatch(AccountActions.SIGN_IN_WITH_GOOGLE);
   }
 
   signInWithEmailAndPassword(
     emailAddress: string,
     password: string
-  ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      store.dispatch(AccountActions.SIGN_IN_WITH_EMAIL_AND_PASSWORD, {
-        emailAddress,
-        password,
-      });
-      resolve();
+  ): Promise<Result<FirebaseAuthUser, Error>> {
+    return store.dispatch(AccountActions.SIGN_IN_WITH_EMAIL_AND_PASSWORD, {
+      emailAddress,
+      password,
     });
   }
 
-  signInWithSlack(code: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      store.dispatch(AccountActions.SIGN_IN_WITH_SLACK, { code });
-      resolve();
-    });
+  signInWithSlack(code: string): Promise<Result<SlackAuthUser, Error>> {
+    return store.dispatch(AccountActions.SIGN_IN_WITH_SLACK, { code });
   }
 
   signOut(): Promise<void> {

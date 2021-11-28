@@ -69,9 +69,9 @@ export class FirebaseAuthAdapter implements FirebaseAuthentication {
           const user = await this._createUserFromCredential(credential);
           return resolve(user);
         })
-        .catch((error) => {
-          console.error(error);
-          return reject(error);
+        .catch((err) => {
+          const result = Result.fail<User, Error>(err);
+          return resolve(result);
         });
     });
   }
@@ -82,7 +82,7 @@ export class FirebaseAuthAdapter implements FirebaseAuthentication {
     return new Promise((resolve, reject) => {
       const provider = AuthProvider[providerType];
       if (!provider) {
-        reject(
+        resolve(
           Result.fail(
             Error(`Invalid Provider: ${providerType} is not supported.`)
           )
