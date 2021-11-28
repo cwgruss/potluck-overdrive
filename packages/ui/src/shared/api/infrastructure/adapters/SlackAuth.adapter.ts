@@ -3,8 +3,8 @@ import { TYPES } from "@/shared/providers/types";
 import axios from "axios";
 import { inject, injectable } from "inversify";
 import { OAuthAPIAuthentication } from "../../domain/adapters";
-import { EmailAddress } from "../../domain/models/EmailAddress";
-import SlackAuthUser from "../../domain/models/SlackUser";
+import { EmailAddress } from "../../domain/models/user/EmailAddress";
+import SlackAuthUser from "../../domain/models/user/SlackUser";
 import {
   OAuthProviderTypes,
   OAuthProviderUrls,

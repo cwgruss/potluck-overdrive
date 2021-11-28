@@ -1,13 +1,13 @@
 import { inject, injectable } from "inversify";
 import firebase from "firebase/app";
 import { FirebaseAuthentication } from "@/shared/api/domain/adapters";
-import { FirebaseAuthUser } from "@/shared/api/domain/models/FirebaseUser";
+import { FirebaseAuthUser } from "@/shared/api/domain/models/user/FirebaseUser";
 import {
   AuthProvider,
   FirebaseAuthProviderTypes,
 } from "@/shared/api/domain/repositories/AuthProvider.interface";
 import { TYPES } from "@/shared/providers/types";
-import { EmailAddress } from "../../domain/models/EmailAddress";
+import { EmailAddress } from "../../domain/models/user/EmailAddress";
 
 @injectable()
 export class FirebaseAuthAdapter implements FirebaseAuthentication {

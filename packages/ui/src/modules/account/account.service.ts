@@ -1,4 +1,4 @@
-import SlackAuthUser from "@/shared/api/domain/models/SlackUser";
+import SlackAuthUser from "@/shared/api/domain/models/user/SlackUser";
 import { FirebaseAuthProviderTypes } from "@/shared/api/domain/repositories/AuthProvider.interface";
 import {
   FirebaseAuthAdapter,
@@ -7,7 +7,7 @@ import {
 import { TYPES } from "@/shared/providers/types";
 import { inject, injectable } from "inversify";
 import firebase from "firebase/app";
-import { FirebaseAuthUser } from "@/shared/api/domain/models/FirebaseUser";
+import { FirebaseAuthUser } from "@/shared/api/domain/models/user/FirebaseUser";
 import { Result } from "@/shared/core/monads/result";
 
 @injectable()

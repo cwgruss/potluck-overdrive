@@ -1,5 +1,5 @@
 import { AccountService } from "@/modules/account";
-import { FirebaseAuthUser } from "@/shared/api/domain/models/FirebaseUser";
+import { FirebaseAuthUser } from "@/shared/api/domain/models/user/FirebaseUser";
 import { TYPES } from "@/shared/providers";
 import { getContainer } from "@/shared/providers/container";
 import { inject, injectable } from "inversify";

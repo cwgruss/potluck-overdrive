@@ -1,3 +1,4 @@
+import { Serializable } from "@/shared/core/serialize/serializable";
 import { shallowEqual } from "@/shared/core/shallowEqual";
 /**
  *
@@ -11,10 +12,13 @@ interface ValueObjectProps {
  * equality through their structrual property.
  */
 
-export abstract class ValueObject<T extends ValueObjectProps> {
+export abstract class ValueObject<
+  T extends ValueObjectProps
+> extends Serializable {
   public readonly props: T;
 
   constructor(props: T) {
+    super();
     this.props = Object.freeze(props);
   }
 

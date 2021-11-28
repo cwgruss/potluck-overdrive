@@ -26,7 +26,9 @@ export default class Ingredients extends Vue {
 
   popIngredient(): void {
     this._ingredientService.popIngredient().then((ingredient) => {
-      console.log({ ingredient });
+      console.log({
+        name: ingredient.name,
+      });
     });
   }
 }

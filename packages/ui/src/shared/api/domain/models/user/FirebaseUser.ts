@@ -1,9 +1,9 @@
-import { Entity } from "../util/Entity";
-import { UniqueEntityID } from "../util/UniqueEntityID";
+import { Entity } from "../../util/Entity";
+import { UniqueEntityID } from "../../util/UniqueEntityID";
 import { EmailAddress } from "./EmailAddress";
 import { OAuthUserProps } from "./OauthUserProps";
 
-export default class SlackAuthUser extends Entity<OAuthUserProps> {
+export class FirebaseAuthUser extends Entity<OAuthUserProps> {
   get id(): UniqueEntityID {
     return this._id;
   }
@@ -27,7 +27,7 @@ export default class SlackAuthUser extends Entity<OAuthUserProps> {
   public static create(
     props: OAuthUserProps,
     id?: UniqueEntityID
-  ): SlackAuthUser {
-    return new SlackAuthUser(props, id);
+  ): FirebaseAuthUser {
+    return new FirebaseAuthUser(props, id);
   }
 }

@@ -1,5 +1,5 @@
 import { Result } from "@/shared/core/monads/result";
-import { FirebaseAuthUser } from "../models/FirebaseUser";
+import { FirebaseAuthUser } from "../models/user/FirebaseUser";
 import { FirebaseAuthProviderTypes } from "../repositories/AuthProvider.interface";
 
 export interface FirebaseAuthentication {

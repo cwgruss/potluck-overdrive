@@ -1,3 +1,4 @@
+import { Ingredient } from "@/shared/api/domain/models/ingredient/Ingredient";
 import { AbstractStorage } from "@/shared/core/storage/storage";
 import { injectable } from "inversify";
 
@@ -11,13 +12,13 @@ export class IngredientsCache extends AbstractStorage<AccountCacheKeys> {
     super();
   }
 
-  public getIngredients(): string[] {
+  public getIngredients(): Ingredient[] {
     const val = this.getItem(AccountCacheKeys.INGREDIENTS);
     const arr = val ? JSON.parse(val) : [];
     return arr;
   }
 
-  public setIngredients(ingredients: string[]) {
+  public setIngredients(ingredients: Ingredient[]) {
     const strIngredients = JSON.stringify(ingredients);
     this.setItem(AccountCacheKeys.INGREDIENTS, strIngredients);
   }

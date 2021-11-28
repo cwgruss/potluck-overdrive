@@ -1,3 +1,4 @@
+import { Ingredient } from "@/shared/api/domain/models/ingredient/Ingredient";
 import { getContainer } from "@/shared/providers";
 import { injectable } from "inversify";
 import { RootState } from "../root";
@@ -12,7 +13,7 @@ import {
 import { IngredientsCache } from "./ingredients.cache";
 
 export interface IngredientsState {
-  ingredients: string[];
+  ingredients: Ingredient[];
 }
 
 const ADD_INGREDIENT = "ADD_INGREDIENT";
@@ -35,7 +36,7 @@ class VueXIngredientsModule
     state: IngredientsState
   ) => {
     return {
-      ingredients(): string[] {
+      ingredients(): Ingredient[] {
         return state.ingredients;
       },
     };
@@ -45,16 +46,13 @@ class VueXIngredientsModule
     state: IngredientsState
   ) => {
     return {
-      addIngredient(
-        { commit },
-        payload: { ingredient: string }
-      ): Promise<void> {
+      addIngredient({ commit }, payload: Ingredient): Promise<void> {
         return new Promise((resolve, reject) => {
           commit(ADD_INGREDIENT, payload);
         });
       },
 
-      popLastIngredient({ commit }): Promise<string> {
+      popLastIngredient({ commit }): Promise<Ingredient> {
         return new Promise((resolve, reject) => {
           const lastEl = state.ingredients.slice(-1)[0];
           commit(POP_LAST_INGREDIENT);
@@ -68,12 +66,9 @@ class VueXIngredientsModule
     state: IngredientsState
   ) => {
     return {
-      [ADD_INGREDIENT]: (
-        state: IngredientsState,
-        payload: { ingredient: string }
-      ) => {
-        const { ingredient } = payload;
-        state.ingredients.push(ingredient);
+      [ADD_INGREDIENT]: (state: IngredientsState, payload: Ingredient) => {
+        const { name } = payload;
+        state.ingredients.push(payload);
         this._cache.setIngredients(state.ingredients);
       },
       [POP_LAST_INGREDIENT]: (state: IngredientsState) => {
