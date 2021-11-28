@@ -66,10 +66,12 @@ describe("FirebaseAuthAdapter", () => {
       };
 
       /* ///// 2. Act /////// */
-      const firebaseUser = await service.registerUserWithEmailAndPassword(
+      const result = await service.registerUserWithEmailAndPassword(
         testUser.username,
         testUser.password
       );
+
+      const firebaseUser = result.unwrap();
 
       /* ///// 3. Assert /////// */
       expect(firebaseUser.displayName).toBe("Test User");

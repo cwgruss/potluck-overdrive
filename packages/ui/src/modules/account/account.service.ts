@@ -9,6 +9,8 @@ import { inject, injectable } from "inversify";
 import firebase from "firebase/app";
 import { FirebaseAuthUser } from "@/shared/api/domain/models/user/FirebaseUser";
 import { Result } from "@/shared/core/monads/result";
+import { User } from "@/shared/api/domain/models/user/User";
+import { Maybe } from "@/shared/core/monads/maybe/maybe";
 
 @injectable()
 export class AccountService {
@@ -20,6 +22,10 @@ export class AccountService {
     _auth.onAuthStateChanged((user) => {
       console.log(user);
     });
+  }
+
+  getCurrentUser(): Result<User, Error> {
+    return this._firebase.getCurrentUser();
   }
 
   get slackSignInURL(): string {
@@ -36,7 +42,7 @@ export class AccountService {
         password
       );
 
-      return Result.ok(user);
+      return user;
     } catch (error) {
       return Result.fail(error as Error);
     }
@@ -52,29 +58,21 @@ export class AccountService {
         password
       );
 
-      return Result.ok(user);
+      return user;
     } catch (error) {
       return Result.fail(error as Error);
     }
   }
 
   async signInWithGoogle(): Promise<Result<FirebaseAuthUser, Error>> {
-    try {
-      const user = await this._firebase.signInWithPopUp(
-        FirebaseAuthProviderTypes.Google
-      );
+    const result = await this._firebase.signInWithPopUp(
+      FirebaseAuthProviderTypes.Google
+    );
 
-      if (!user) {
-        return Result.fail(new Error("Unable to login with Google"));
-      }
-
-      return Result.ok(user);
-    } catch (error) {
-      return Result.fail(error as Error);
-    }
+    return result;
   }
 
-  async signInWithSlack(code: string): Promise<SlackAuthUser> {
+  async signInWithSlack(code: string): Promise<Result<SlackAuthUser, Error>> {
     const token = await this._slack.getBearerToken(code);
     const user = await this._slack.signWithToken(token);
     return user;

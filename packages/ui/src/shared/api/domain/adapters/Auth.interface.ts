@@ -11,7 +11,7 @@ export interface FirebaseAuthentication {
   registerUserWithEmailAndPassword(
     emailAddress: string,
     password: string
-  ): Promise<FirebaseAuthUser>;
+  ): Promise<Result<FirebaseAuthUser, Error>>;
 
   /**
    * Asynchronously signs in using an email and password.
@@ -22,7 +22,7 @@ export interface FirebaseAuthentication {
   signInWithEmailAndPassword(
     emailAddress: string,
     password: string
-  ): Promise<FirebaseAuthUser>;
+  ): Promise<Result<FirebaseAuthUser, Error>>;
 
   /**
    * Authenticates a Firebase client using a popup-based OAuth authentication flow.
@@ -30,11 +30,11 @@ export interface FirebaseAuthentication {
    */
   signInWithPopUp(
     provider: FirebaseAuthProviderTypes
-  ): Promise<FirebaseAuthUser>;
+  ): Promise<Result<FirebaseAuthUser, Error>>;
 }
 
-export interface OAuthAPIAuthentication<T> {
+export interface OAuthAPIAuthentication<T, E> {
   readonly _OAuthAPIURL: string;
   getBearerToken(): Promise<string>;
-  signWithToken(token: string): Promise<T>;
+  signWithToken(token: string): Promise<Result<T, E>>;
 }

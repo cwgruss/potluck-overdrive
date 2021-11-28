@@ -20,12 +20,17 @@ export class EmailAddress extends ValueObject<EmailAddressProps> {
   fromJSON(json: any): this {
     throw new Error("Method not implemented.");
   }
+
   fromString(str: string): this {
     throw new Error("Method not implemented.");
   }
+
   toJSON() {
-    throw new Error("Method not implemented.");
+    return {
+      value: this.value,
+    };
   }
+
   toString(): string {
     throw new Error("Method not implemented.");
   }

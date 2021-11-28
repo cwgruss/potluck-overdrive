@@ -14,6 +14,7 @@ import {
 import { RootState } from "../root";
 import { AccountCache } from "./account.cache";
 import { AccountStatus } from "./account.status";
+import { Result } from "@/shared/core/monads/result";
 
 export interface AccountState {
   status: string;
@@ -58,10 +59,13 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
   ) => {
     const getters = {
       isSignedIn(): boolean {
-        return state.isSignedIn;
+        return state.isSignedIn || false;
       },
 
-      user(): { uid: string } | null {
+      getCurrentUser(): { uid: string } | null {
+        if (!state.user) {
+          return null;
+        }
         return state.user;
       },
     };
@@ -71,23 +75,24 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
 
   createActions: VueXActionsFactoryMethod<AccountState, RootState> = () => {
     return {
-      signInWithGoogle: ({ commit }): Promise<FirebaseAuthUser> => {
+      signInWithGoogle: ({
+        commit,
+      }): Promise<Result<FirebaseAuthUser, Error>> => {
         return new Promise((resolve, reject) => {
           commit(AUTH_REQUEST);
           this._account.signInWithGoogle().then((result) => {
             if (result.isFail()) {
               commit(AUTH_ERROR);
-              const err = result.unwrapFail();
-              reject(err);
+            } else {
+              const user = result.unwrap();
+
+              commit(AUTH_SUCCESS, {
+                token: user.id.toString(),
+                user,
+              });
             }
 
-            const user = result.unwrap();
-
-            commit(AUTH_SUCCESS, {
-              token: user.id.toString(),
-              user,
-            });
-            resolve(user);
+            resolve(result);
           });
         });
       },
@@ -99,7 +104,14 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
           commit(AUTH_REQUEST);
           this._account
             .signInWithSlack(payload.code)
-            .then((user) => {
+            .then((result) => {
+              if (result.isFail()) {
+                commit(AUTH_ERROR);
+                const err = result.unwrapFail();
+                return reject(err);
+              }
+
+              const user = result.unwrap();
               commit(AUTH_SUCCESS, {
                 token: user.id.toString(),
                 user,

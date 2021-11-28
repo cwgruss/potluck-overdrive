@@ -1,11 +1,11 @@
-import { ValueObject } from "../../util";
+import { Entity } from "../../util/Entity";
 
-interface IngredientProps {
+export interface IngredientProps {
   name: string;
 }
 
-export class Ingredient extends ValueObject<IngredientProps> {
-  private constructor(props: IngredientProps) {
+export class Ingredient extends Entity<IngredientProps> {
+  protected constructor(props: IngredientProps) {
     super(props);
   }
 

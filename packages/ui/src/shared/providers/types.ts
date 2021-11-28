@@ -9,6 +9,14 @@ const TYPES = {
   SlackAuth: Symbol.for("Domain/Authentication/Slack"),
   AccountService: Symbol.for("Services/Account"),
   LogManager: Symbol.for("Shared/Util/Logger/LogManager"),
+
+  // Proxies
+  AccountStore: Symbol.for(
+    "Shared/Api/Infrastructure/Store/Account/AccountStore"
+  ),
+  IngredientStore: Symbol.for(
+    "Shared/Api/Infrastructure/Store/Ingredient/IngredientStore"
+  ),
 };
 
 export { TYPES };

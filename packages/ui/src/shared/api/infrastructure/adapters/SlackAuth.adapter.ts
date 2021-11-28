@@ -9,6 +9,7 @@ import {
   OAuthProviderTypes,
   OAuthProviderUrls,
 } from "../../domain/repositories/AuthProvider.interface";
+import { Result } from "@/shared/core/monads/result";
 
 interface SlackSuccessResponse {
   ok: boolean;
@@ -35,7 +36,9 @@ const scopes = ["identity.basic", "identity.email", "identity.avatar"].join(
 );
 
 @injectable()
-export class SlackAuthAdapter implements OAuthAPIAuthentication<SlackAuthUser> {
+export class SlackAuthAdapter
+  implements OAuthAPIAuthentication<SlackAuthUser, Error>
+{
   private _redirectURI = SLACK_REDIRECT_URI;
   readonly _OAuthAPIURL: string;
 
@@ -67,7 +70,7 @@ export class SlackAuthAdapter implements OAuthAPIAuthentication<SlackAuthUser> {
     return headers["Authorization"];
   }
 
-  async signWithToken(token: string): Promise<SlackAuthUser> {
+  async signWithToken(token: string): Promise<Result<SlackAuthUser, Error>> {
     const credential = this._auth.signInWithCustomToken(token);
     const user = await this._createUserFromCredential(credential);
 
@@ -96,7 +99,7 @@ export class SlackAuthAdapter implements OAuthAPIAuthentication<SlackAuthUser> {
 
   private async _createUserFromCredential(
     credentialPromise: Promise<firebase.auth.UserCredential>
-  ): Promise<SlackAuthUser> {
+  ): Promise<Result<SlackAuthUser, Error>> {
     try {
       const credential = await credentialPromise;
       if (!credential || !credential.user) {
@@ -118,7 +121,7 @@ export class SlackAuthAdapter implements OAuthAPIAuthentication<SlackAuthUser> {
 
       return user;
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
       throw err;
     }
   }

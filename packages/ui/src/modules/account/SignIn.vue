@@ -86,12 +86,14 @@ export default class SignIn extends Vue {
   emailAddress: string | null = null;
 
   created() {
-    this._stateProxy = new AccountVueXStateProxy();
+    this._stateProxy = this.container.resolve(AccountVueXStateProxy);
     console.log(this._stateProxy);
   }
 
   handleGoogleSignIn(): void {
-    this._stateProxy.signInWithGoogle();
+    this._stateProxy.signInWithGoogle().catch((err) => {
+      console.log(err);
+    });
   }
 
   handleSignInWithEmailAndPassword(

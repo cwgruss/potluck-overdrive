@@ -8,6 +8,9 @@ import {
 } from "@/shared/api/domain/repositories/AuthProvider.interface";
 import { TYPES } from "@/shared/providers/types";
 import { EmailAddress } from "../../domain/models/user/EmailAddress";
+import { Maybe } from "@/shared/core/monads/maybe/maybe";
+import { User } from "../../domain/models/user/User";
+import { Result } from "@/shared/core/monads/result";
 
 @injectable()
 export class FirebaseAuthAdapter implements FirebaseAuthentication {
@@ -15,19 +18,41 @@ export class FirebaseAuthAdapter implements FirebaseAuthentication {
     @inject(TYPES.__FirebaseAuth__) private _auth: firebase.auth.Auth
   ) {}
 
+  getFirebaseUser(): firebase.User | null {
+    const userData = this._auth.currentUser;
+    return userData!;
+  }
+
+  getCurrentUser(): Result<User, Error> {
+    const data = this.getFirebaseUser();
+    if (!data) {
+      return Result.fail(new Error("No user is currently signed in"));
+    }
+
+    const user = User.create({
+      uid: data?.uid,
+      displayName: data?.displayName,
+      emailAddress: EmailAddress.create(data?.email),
+      photoURL: data?.photoURL,
+    });
+
+    return user;
+  }
+
   async registerUserWithEmailAndPassword(
     emailAddress: string,
     password: string
-  ): Promise<FirebaseAuthUser> {
+  ): Promise<Result<FirebaseAuthUser, Error>> {
     return new Promise((resolve, reject) => {
       this._auth
         .createUserWithEmailAndPassword(emailAddress, password)
         .then(async (credential) => {
           const user = await this._createUserFromCredential(credential);
-          resolve(user);
+          return resolve(user);
         })
         .catch((error) => {
-          reject(error);
+          const result = Result.fail<User, Error>(error);
+          return resolve(result);
         });
     });
   }
@@ -35,7 +60,7 @@ export class FirebaseAuthAdapter implements FirebaseAuthentication {
   async signInWithEmailAndPassword(
     emailAddress: string,
     password: string
-  ): Promise<FirebaseAuthUser> {
+  ): Promise<Result<FirebaseAuthUser, Error>> {
     return new Promise((resolve, reject) => {
       return this._auth
         .signInWithEmailAndPassword(emailAddress, password)
@@ -53,30 +78,36 @@ export class FirebaseAuthAdapter implements FirebaseAuthentication {
 
   async signInWithPopUp(
     providerType: FirebaseAuthProviderTypes
-  ): Promise<FirebaseAuthUser> {
+  ): Promise<Result<FirebaseAuthUser, Error>> {
     return new Promise((resolve, reject) => {
       const provider = AuthProvider[providerType];
       if (!provider) {
-        throw new Error(`Invalid Provider: ${providerType} is not supported.`);
+        reject(
+          Result.fail(
+            Error(`Invalid Provider: ${providerType} is not supported.`)
+          )
+        );
+        return;
       }
 
-      this._auth
+      return this._auth
         .signInWithPopup(provider)
         .then(async (credential) => {
           const user = await this._createUserFromCredential(credential);
-          resolve(user);
+          return resolve(user);
         })
         .catch((err) => {
-          reject(err);
+          const result = Result.fail<User, Error>(err);
+          return resolve(result);
         });
     });
   }
 
   private async _createUserFromCredential(
     credential: firebase.auth.UserCredential
-  ): Promise<FirebaseAuthUser> {
+  ): Promise<Result<FirebaseAuthUser, Error>> {
     if (!credential || !credential.user) {
-      throw new Error("No User found with those credentials");
+      return Result.fail(new Error("No User found with those credentials"));
     }
 
     const { displayName, email: emailAddress, uid, photoURL } = credential.user;

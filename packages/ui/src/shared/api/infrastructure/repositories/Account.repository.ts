@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import firebase from "firebase";
 import { TYPES } from "@/shared/providers/types";
+
 @injectable()
 export default class FirebaseAccountRepositoty {
   private _usersRef: firebase.firestore.DocumentData;

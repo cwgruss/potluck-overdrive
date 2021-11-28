@@ -10,13 +10,22 @@
 import SearchInput from "@/shared/components/input/SearchInput.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { IngredientsVueXStateProxy } from "@/shared/api/infrastructure/store/ingredients";
+import { TYPES } from "@/shared/providers";
+import { Container as InversifyContainer } from "inversify";
+import store from "@/shared/api/infrastructure/store/store";
+
 @Component({
   components: { SearchInput },
+  inject: {
+    container: TYPES.Container,
+  },
 })
 export default class Ingredients extends Vue {
   private _ingredientService!: IngredientsVueXStateProxy;
+  container!: InversifyContainer;
+
   created(): void {
-    this._ingredientService = new IngredientsVueXStateProxy();
+    this._ingredientService = this.container.resolve(IngredientsVueXStateProxy);
   }
 
   onSelection(value: string): void {
