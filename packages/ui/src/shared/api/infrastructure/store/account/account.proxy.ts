@@ -11,6 +11,19 @@ export class AccountVueXStateProxy {
     });
   }
 
+  signInWithEmailAndPassword(
+    emailAddress: string,
+    password: string
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      store.dispatch(AccountActions.SIGN_IN_WITH_EMAIL_AND_PASSWORD, {
+        emailAddress,
+        password,
+      });
+      resolve();
+    });
+  }
+
   signInWithSlack(code: string): Promise<void> {
     return new Promise((resolve, reject) => {
       store.dispatch(AccountActions.SIGN_IN_WITH_SLACK, { code });

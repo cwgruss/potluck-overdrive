@@ -19,67 +19,75 @@ export class FirebaseAuthAdapter implements FirebaseAuthentication {
     emailAddress: string,
     password: string
   ): Promise<FirebaseAuthUser> {
-    const credential = this._auth.createUserWithEmailAndPassword(
-      emailAddress,
-      password
-    );
-
-    const user = this._createUserFromCredential(credential);
-    return user;
+    return new Promise((resolve, reject) => {
+      this._auth
+        .createUserWithEmailAndPassword(emailAddress, password)
+        .then(async (credential) => {
+          const user = await this._createUserFromCredential(credential);
+          resolve(user);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   }
 
   async signInWithEmailAndPassword(
     emailAddress: string,
     password: string
   ): Promise<FirebaseAuthUser> {
-    const credential = this._auth.signInWithEmailAndPassword(
-      emailAddress,
-      password
-    );
-    const user = await this._createUserFromCredential(credential);
-    return user;
+    return new Promise((resolve, reject) => {
+      return this._auth
+        .signInWithEmailAndPassword(emailAddress, password)
+        .then(async (credential) => {
+          console.log(credential);
+          const user = await this._createUserFromCredential(credential);
+          return resolve(user);
+        })
+        .catch((error) => {
+          console.error(error);
+          return reject(error);
+        });
+    });
   }
 
   async signInWithPopUp(
     providerType: FirebaseAuthProviderTypes
   ): Promise<FirebaseAuthUser> {
-    const provider = AuthProvider[providerType];
-    if (!provider) {
-      throw new Error(`Invalid Provider: ${providerType} is not supported.`);
-    }
-    const credential = this._auth.signInWithPopup(provider);
-    const user = await this._createUserFromCredential(credential);
-    return user;
+    return new Promise((resolve, reject) => {
+      const provider = AuthProvider[providerType];
+      if (!provider) {
+        throw new Error(`Invalid Provider: ${providerType} is not supported.`);
+      }
+
+      this._auth
+        .signInWithPopup(provider)
+        .then(async (credential) => {
+          const user = await this._createUserFromCredential(credential);
+          resolve(user);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
   }
 
   private async _createUserFromCredential(
-    credentialPromise: Promise<firebase.auth.UserCredential>
+    credential: firebase.auth.UserCredential
   ): Promise<FirebaseAuthUser> {
-    try {
-      const credential = await credentialPromise;
-
-      if (!credential || !credential.user) {
-        throw new Error("No User found with those credentials");
-      }
-
-      const {
-        displayName,
-        email: emailAddress,
-        uid,
-        photoURL,
-      } = credential.user;
-
-      const user = FirebaseAuthUser.create({
-        uid,
-        displayName,
-        emailAddress: EmailAddress.create(emailAddress),
-        photoURL,
-      });
-
-      return user;
-    } catch (err) {
-      console.error(err.message);
-      throw err;
+    if (!credential || !credential.user) {
+      throw new Error("No User found with those credentials");
     }
+
+    const { displayName, email: emailAddress, uid, photoURL } = credential.user;
+
+    const user = FirebaseAuthUser.create({
+      uid,
+      displayName,
+      emailAddress: EmailAddress.create(emailAddress),
+      photoURL,
+    });
+
+    return user;
   }
 }

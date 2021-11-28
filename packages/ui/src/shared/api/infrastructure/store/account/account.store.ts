@@ -13,6 +13,7 @@ import {
 } from "../vuex.factory";
 import { RootState } from "../root";
 import { AccountCache } from "./account.cache";
+import { AccountStatus } from "./account.status";
 
 export interface AccountState {
   status: string;
@@ -43,7 +44,7 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
   // State
   createInitialState: VueXStateFactoyMethod<AccountState> = () => {
     const initialState: AccountState = {
-      status: "pending",
+      status: AccountStatus.PENDING,
       isSignedIn: this._cache.getIsSignedIn(), // default to cached value to help prevent FOUC
       token: this._cache.getToken(),
       user: null,
@@ -73,19 +74,21 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
       signInWithGoogle: ({ commit }): Promise<FirebaseAuthUser> => {
         return new Promise((resolve, reject) => {
           commit(AUTH_REQUEST);
-          this._account
-            .signInWithGoogle()
-            .then((user) => {
-              commit(AUTH_SUCCESS, {
-                token: user.id.toString(),
-                user,
-              });
-              resolve(user);
-            })
-            .catch((err) => {
+          this._account.signInWithGoogle().then((result) => {
+            if (result.isFail()) {
               commit(AUTH_ERROR);
+              const err = result.unwrapFail();
               reject(err);
+            }
+
+            const user = result.unwrap();
+
+            commit(AUTH_SUCCESS, {
+              token: user.id.toString(),
+              user,
             });
+            resolve(user);
+          });
         });
       },
       signInWithSlack: (
@@ -109,6 +112,31 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
             });
         });
       },
+      signInWithEmailAndPassword: (
+        { commit },
+        payload: { emailAddress: string; password: string }
+      ): Promise<FirebaseAuthUser> => {
+        return new Promise((resolve, reject) => {
+          const { emailAddress, password } = payload;
+          this._account
+            .signInWithEmailAndPassword(emailAddress, password)
+            .then((result) => {
+              if (result.isFail()) {
+                commit(AUTH_ERROR);
+                const err = result.unwrapFail();
+                return reject(err);
+              }
+
+              const user = result.unwrap();
+
+              commit(AUTH_SUCCESS, {
+                token: user.id.toString(),
+                user,
+              });
+              resolve(user);
+            });
+        });
+      },
       signOut: ({ commit }): Promise<void> => {
         return this._account.signOut().then(() => {
           commit(AUTH_SIGN_OUT);
@@ -122,7 +150,7 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
   ) => {
     return {
       [AUTH_REQUEST]: (state: AccountState) => {
-        state.status = "loading";
+        state.status = AccountStatus.LOADING;
       },
       [AUTH_SUCCESS]: (
         state: AccountState,
@@ -130,21 +158,24 @@ class VueXAccountModule implements VueXModuleFactory<AccountState, RootState> {
       ) => {
         this._cache.setIsSignedIn(true);
         this._cache.setToken(payload.token);
-        state.status = "success";
+        state.status = AccountStatus.SUCCESS;
+        state.isSignedIn = true;
         state.token = payload.token;
         state.user = {
           uid: payload.user.id.toString(),
         };
+
+        state.status = AccountStatus.LOGGED_IN;
       },
       [AUTH_ERROR]: (state: AccountState) => {
         this._cache.clearAll();
-        state.status = "error";
+        state.status = AccountStatus.FAILURE;
       },
       [AUTH_SIGN_OUT]: (state: AccountState) => {
         this._cache.clearAll();
         state.token = "";
         state.user = null;
-        state.status = "logged-out";
+        state.status = AccountStatus.LOGGED_OUT;
         state.isSignedIn = false;
         this._cache.setIsSignedIn(false);
         this._cache.setToken(null);

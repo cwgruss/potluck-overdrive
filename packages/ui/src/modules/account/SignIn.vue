@@ -33,6 +33,7 @@
               id="user_uid"
               class="input"
               placeholder="Phone, Email, or Username"
+              v-model="emailAddress"
             />
           </div>
           <div class="input_field">
@@ -44,6 +45,7 @@
               id="password"
               class="input"
               placeholder="Password"
+              v-model="password"
             />
           </div>
         </div>
@@ -51,6 +53,9 @@
           <button
             class="button button--primary create-account__submit"
             type="submit"
+            v-on:click="
+              handleSignInWithEmailAndPassword(emailAddress, password, $event)
+            "
           >
             Sign In
           </button>
@@ -77,6 +82,9 @@ export default class SignIn extends Vue {
   private _accountService?: AccountService;
   _stateProxy!: AccountVueXStateProxy;
 
+  password: string | null = null;
+  emailAddress: string | null = null;
+
   created() {
     this._stateProxy = new AccountVueXStateProxy();
     console.log(this._stateProxy);
@@ -84,6 +92,15 @@ export default class SignIn extends Vue {
 
   handleGoogleSignIn(): void {
     this._stateProxy.signInWithGoogle();
+  }
+
+  handleSignInWithEmailAndPassword(
+    emailAddress: string,
+    password: string,
+    event: Event
+  ): void {
+    event.preventDefault();
+    this._stateProxy.signInWithEmailAndPassword(emailAddress, password);
   }
 
   handleSlackSignIn(code: string): void {

@@ -42,6 +42,7 @@ module.exports = {
       console.info("Pre-rendering.");
       config.plugins.push(prerenderPlugin);
     }
+
     config.devtool = "source-map";
   },
   chainWebpack: (config) => {

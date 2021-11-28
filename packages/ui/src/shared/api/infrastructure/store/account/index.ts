@@ -1,2 +1,2 @@
 export * from "./account.actions";
-export * from "./account.repository";
+export * from "./account.proxy";

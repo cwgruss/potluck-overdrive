@@ -19,7 +19,7 @@ import {
   SlackAuthAdapter,
 } from "@/shared/api/infrastructure/adapters";
 import { AccountCache } from "../api/infrastructure/store/account/account.cache";
-import { AccountVueXStateProxy } from "../api/infrastructure/store/account/account.repository";
+import { AccountVueXStateProxy } from "../api/infrastructure/store/account/account.proxy";
 import { IngredientsCache } from "../api/infrastructure/store/ingredients/ingredients.cache";
 const INVERSIFY_CONFIG = {
   autoBindInjectable: true,

@@ -8,6 +8,7 @@ import { TYPES } from "@/shared/providers/types";
 import { inject, injectable } from "inversify";
 import firebase from "firebase/app";
 import { FirebaseAuthUser } from "@/shared/api/domain/models/FirebaseUser";
+import { Result } from "@/shared/core/monads/result";
 
 @injectable()
 export class AccountService {
@@ -28,29 +29,49 @@ export class AccountService {
   async createNewUserWithEmailAndPassword(
     emailAddress: string,
     password: string
-  ): Promise<FirebaseAuthUser> {
-    const user = this._firebase.registerUserWithEmailAndPassword(
-      emailAddress,
-      password
-    );
-    return user;
+  ): Promise<Result<FirebaseAuthUser, Error>> {
+    try {
+      const user = await this._firebase.registerUserWithEmailAndPassword(
+        emailAddress,
+        password
+      );
+
+      return Result.ok(user);
+    } catch (error) {
+      return Result.fail(error as Error);
+    }
   }
 
   async signInWithEmailAndPassword(
     emailAddress: string,
     password: string
-  ): Promise<void> {
-    const user = this._firebase.signInWithEmailAndPassword(
-      emailAddress,
-      password
-    );
+  ): Promise<Result<FirebaseAuthUser, Error>> {
+    try {
+      const user = await this._firebase.signInWithEmailAndPassword(
+        emailAddress,
+        password
+      );
+
+      return Result.ok(user);
+    } catch (error) {
+      return Result.fail(error as Error);
+    }
   }
 
-  async signInWithGoogle(): Promise<FirebaseAuthUser> {
-    const user = this._firebase.signInWithPopUp(
-      FirebaseAuthProviderTypes.Google
-    );
-    return user;
+  async signInWithGoogle(): Promise<Result<FirebaseAuthUser, Error>> {
+    try {
+      const user = await this._firebase.signInWithPopUp(
+        FirebaseAuthProviderTypes.Google
+      );
+
+      if (!user) {
+        return Result.fail(new Error("Unable to login with Google"));
+      }
+
+      return Result.ok(user);
+    } catch (error) {
+      return Result.fail(error as Error);
+    }
   }
 
   async signInWithSlack(code: string): Promise<SlackAuthUser> {

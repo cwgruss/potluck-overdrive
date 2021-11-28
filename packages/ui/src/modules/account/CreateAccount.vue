@@ -7,13 +7,14 @@
         <div class="fields">
           <div class="input_field">
             <!-- Name -->
-            <label class="input_label" for="name">Name</label>
+            <label class="input_label" for="name">Username</label>
             <input
               type="text"
               name="name"
               id="name"
               class="input"
               placeholder="Name"
+              v-model="username"
             />
           </div>
           <div class="input_field">
@@ -25,6 +26,7 @@
               id="email_address"
               class="input"
               placeholder="Email Address"
+              v-model="emailAddress"
             />
           </div>
           <div class="input_field">
@@ -36,6 +38,7 @@
               id="password"
               class="input"
               placeholder="Password"
+              v-model="password"
             />
           </div>
         </div>
@@ -43,6 +46,7 @@
           <button
             class="button button--primary create-account__submit"
             type="submit"
+            @click="handleCreateAccount(emailAddress, password)"
           >
             Create Account
           </button>
@@ -70,6 +74,10 @@ export default class CreateAccount extends Vue {
   private _accountService?: AccountService;
   logger?: Logger;
 
+  username: string | null = null;
+  password: string | null = null;
+  emailAddress: string | null = null;
+
   created(): void {
     this._accountService = this.container.get<AccountService>(
       TYPES.AccountService
@@ -82,12 +90,14 @@ export default class CreateAccount extends Vue {
     this.logger?.info("created CreateAccount");
   }
 
-  handleGoogleSignIn(): void {
-    this._accountService?.signInWithGoogle();
-  }
-
-  handleSlackSignIn(): void {
-    // this._accountService?.signInWithSlack();
+  async handleCreateAccount(
+    emailAddress: string,
+    password: string
+  ): Promise<void> {
+    await this._accountService?.createNewUserWithEmailAndPassword(
+      emailAddress,
+      password
+    );
   }
 }
 </script>
