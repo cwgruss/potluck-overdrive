@@ -1,5 +1,5 @@
-import * as functions from "firebase-functions";
-import { db } from "../../config";
+import * as functions from 'firebase-functions';
+import {db} from '../../config';
 
 export const OnUserCreation = functions.auth
   .user()
@@ -8,8 +8,8 @@ export const OnUserCreation = functions.auth
       return;
     }
 
-    const ref = db.collection("users").doc(user.uid);
-    const { uid, displayName, photoURL, email } = user;
+    const ref = db.collection('users').doc(user.uid);
+    const {uid, displayName, photoURL, email} = user;
     await ref.set(
       {
         uid,
@@ -17,8 +17,8 @@ export const OnUserCreation = functions.auth
         photoURL,
         email,
         joined: Date.now(),
-        role: "contributor",
+        role: 'contributor',
       },
-      { merge: true }
+      {merge: true}
     );
   });
