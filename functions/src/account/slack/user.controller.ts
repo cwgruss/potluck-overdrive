@@ -1,5 +1,5 @@
 import * as functions from "firebase-functions";
-import * as admin from "firebase-admin";
+import { admin } from "../../shared/infra/firebase";
 import axios from "axios";
 import { Request, Response, NextFunction } from "express";
 
