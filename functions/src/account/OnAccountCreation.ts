@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import {db} from '../../config';
+import {db} from '../config';
 
 export const OnUserCreation = functions.auth
   .user()
