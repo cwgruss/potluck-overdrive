@@ -1,5 +1,5 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { UniqueEntityID } from 'src/core/domain/UniqueEntityID';
+import { UniqueEntityID } from 'src/shared/domain/UniqueEntityID';
 import { Result } from 'src/core/monads/result';
 import { EmailAddress } from './email-address.model';
 import { UserCreatedEvent } from './events/userCreated.event';

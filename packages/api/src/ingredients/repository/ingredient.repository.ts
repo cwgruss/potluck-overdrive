@@ -50,7 +50,7 @@ export class IngredientRepository extends IIngredientRepository {
   }
 
   async save(ingredient: Ingredient): Promise<void> {
-    const alreadyExists = await this.exists(ingredient.keyValue);
+    const alreadyExists = await this.exists(ingredient.label.keyValue);
     const rawIngredient = IngredientMap.toPersistance(ingredient);
 
     try {
@@ -69,6 +69,7 @@ export class IngredientRepository extends IIngredientRepository {
           label: rawIngredient.label,
           description: rawIngredient.description,
           priority: rawIngredient.priority,
+          is_vegetarian: rawIngredient.is_vegetarian,
         });
       }
     } catch (error) {
@@ -83,7 +84,10 @@ export class IngredientRepository extends IIngredientRepository {
     const ingredients = querySnapshot.docs.map((doc) => {
       if (doc.exists()) {
         const data = doc.data();
-        return IngredientMap.toDomain(data);
+        const ingredient = IngredientMap.toDomain(data);
+        if (ingredient.isOk()) {
+          return ingredient.unwrap();
+        }
       }
     });
     return ingredients;

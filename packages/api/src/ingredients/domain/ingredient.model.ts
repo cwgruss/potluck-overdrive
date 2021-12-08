@@ -1,24 +1,22 @@
-import { Entity } from 'src/core/domain/Entity';
-import { UniqueEntityID } from 'src/core/domain/UniqueEntityID';
+import { Entity } from 'src/shared/domain/Entity';
 import { Result } from 'src/core/monads/result';
+import { Label } from 'src/shared/domain/label/Label.model';
+import { UniqueEntityID } from 'src/shared/domain/UniqueEntityID';
 
 interface IngredientProps {
   priority: number;
-  label: string;
+  label: Label;
   description?: string;
+  dateCreated?: Date;
+  isVegetarian: boolean;
 }
 
 export class Ingredient extends Entity<IngredientProps> {
-  get keyValue(): string {
-    return this._ingredientKey;
-  }
-  protected _ingredientKey: string;
-
   get id(): UniqueEntityID {
     return this._id;
   }
 
-  get label(): string {
+  get label(): Label {
     return this.props.label;
   }
 
@@ -30,28 +28,42 @@ export class Ingredient extends Entity<IngredientProps> {
     return this.props.description;
   }
 
+  get dateCreated(): Date {
+    return this.props.dateCreated;
+  }
+
+  get isVegetarian(): boolean {
+    return this.props.isVegetarian;
+  }
+
   private constructor(props: IngredientProps, id?: UniqueEntityID) {
     super(props, id);
-    this._ingredientKey = this._createKeyFromLabel(this.props.label);
   }
 
   public static create(
     props: IngredientProps,
     id?: UniqueEntityID,
   ): Result<Ingredient, Error> {
-    const ingredient = new Ingredient(props, id);
+    const ingredient = new Ingredient(
+      {
+        ...props,
+        dateCreated: props.dateCreated
+          ? props.dateCreated
+          : new Date(Date.now()),
+        isVegetarian: props.isVegetarian || false,
+      },
+      id,
+    );
     return Result.ok(ingredient);
   }
 
-  private _createKeyFromLabel(label: string): string {
-    // 1. Remove starting and trailing whitespace
-    let trimmedInput = label.trim();
-
-    // 2. Replace all spaces with underscores
-    trimmedInput = trimmedInput.replace(/\s/g, '_');
-    // 3. Remove characters special to JSON
-    trimmedInput = trimmedInput.replace(/[\b\f\n\r\t\"\\:]/, '');
-    // 4. Force to uppercase
-    return trimmedInput.toUpperCase();
+  public toJSON() {
+    return {
+      label: this.label.value,
+      description: this.description,
+      priority: this.priority,
+      dateCreated: this.dateCreated.toISOString(),
+      vegetarian: this.isVegetarian,
+    };
   }
 }

@@ -3,7 +3,7 @@ export interface UserFirestoreEntity {
   firstName?: string;
   lastName?: string;
   email: string;
-  joined: number;
+  dateJoined: Date;
   photoURL: string;
   role: string;
   isEmailVerified: boolean;

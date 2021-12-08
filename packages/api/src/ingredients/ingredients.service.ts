@@ -3,6 +3,7 @@ import { Result } from 'src/core/monads/result';
 import { Ingredient } from './domain/ingredient.model';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
+import { IngredientMap } from './mappers/ingredient.mapper';
 import { IIngredientRepository } from './repository/ingredient.repository';
 
 @Injectable()
@@ -10,12 +11,13 @@ export class IngredientsService {
   constructor(private _ingredientRepository: IIngredientRepository) {}
 
   async create(createIngredientDto: CreateIngredientDto) {
-    const { label, description, priority } = createIngredientDto;
+    const { label, description, priority, vegetarian } = createIngredientDto;
 
-    const ingredientOrError = Ingredient.create({
+    const ingredientOrError = IngredientMap.toDomain({
       label,
       description,
       priority,
+      is_vegetarian: vegetarian,
     });
 
     if (ingredientOrError.isFail()) {
@@ -25,11 +27,11 @@ export class IngredientsService {
     const ingredient: Ingredient = ingredientOrError.unwrap();
 
     const ingredientAlreadyExists = await this._ingredientRepository.exists(
-      ingredient.keyValue,
+      ingredient.label.keyValue,
     );
 
     if (ingredientAlreadyExists) {
-      return `Ingredient ${ingredient.label} already exists.`;
+      return `Ingredient "${ingredient.label.value}" already exists.`;
     }
 
     try {

@@ -1,4 +1,4 @@
-import { UniqueEntityID } from 'src/core/domain/UniqueEntityID';
+import { UniqueEntityID } from 'src/shared/domain/UniqueEntityID';
 import { EmailAddress } from '../domain/email-address.model';
 import { User } from '../domain/user.model';
 import { UserFirestoreEntity } from '../entity/user.interface';
@@ -10,7 +10,7 @@ export class UserMap {
       displayName: user.displayName || '',
       email: user.emailAddress.value,
       isEmailVerified: user.isEmailVerified || false,
-      joined: user.dateJoined.getUTCDate(),
+      dateJoined: user.dateJoined,
       photoURL: user.profilePicture || '',
       role: user.role || 'contributer',
     };
@@ -25,7 +25,7 @@ export class UserMap {
         emailAddress: emailAddressOrError.unwrap(),
         profilePicture: data.photoURL,
         isEmailVerified: data.isEmailVerified,
-        dateJoined: new Date(data.joined),
+        dateJoined: new Date(data.dateJoined),
         firstName: data.firstName,
         lastName: data.lastName,
       },

@@ -1,4 +1,4 @@
-import { ValueObject } from 'src/core/domain/ValueObject';
+import { ValueObject } from 'src/shared/domain/ValueObject';
 import { Result } from 'src/core/monads/result';
 
 interface EmailAddressProps {

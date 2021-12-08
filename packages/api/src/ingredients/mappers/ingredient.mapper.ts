@@ -1,25 +1,40 @@
-import { UniqueEntityID } from 'src/core/domain/UniqueEntityID';
+import { Timestamp } from 'firebase/firestore';
+import { Result } from 'src/core/monads/result';
+import { Label } from 'src/shared/domain/label/Label.model';
+import { UniqueEntityID } from 'src/shared/domain/UniqueEntityID';
 import { Ingredient } from '../domain/ingredient.model';
 import { IngredientFirestoreEntity } from '../entities/ingredient.interface';
 
 export class IngredientMap {
   static toPersistance(ingredient: Ingredient): IngredientFirestoreEntity {
     return {
-      label: ingredient.label,
+      label: ingredient.label.value,
       description: ingredient.description || '',
       priority: ingredient.priority || 0,
-      key_value: ingredient.keyValue,
+      key_value: ingredient.label.keyValue,
+      date_created: Timestamp.fromDate(ingredient.dateCreated),
+      is_vegetarian: ingredient.isVegetarian,
     };
   }
 
   static toDomain(
     data: unknown & Partial<IngredientFirestoreEntity>,
-  ): Ingredient {
+  ): Result<Ingredient, Error> {
+    const labelOrError = Label.create({
+      label: data.label,
+    });
+
+    if (labelOrError.isFail()) {
+      return Result.fail(labelOrError.unwrapFail());
+    }
+
     const ingredientOrError = Ingredient.create(
       {
-        label: data.label,
+        label: labelOrError.unwrap(),
         priority: data.priority,
         description: data.description,
+        isVegetarian: data.is_vegetarian,
+        dateCreated: data?.date_created?.toDate(),
       },
       new UniqueEntityID(data.id),
     );
@@ -29,6 +44,6 @@ export class IngredientMap {
       return null;
     }
 
-    return ingredientOrError.unwrap();
+    return ingredientOrError;
   }
 }
