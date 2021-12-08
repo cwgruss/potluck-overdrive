@@ -9,10 +9,10 @@ interface UserProps {
   lastName: string;
   displayName: string;
   emailAddress: EmailAddress;
-  role: string;
-  isEmailVerified: boolean;
+  role?: string;
+  isEmailVerified?: boolean;
   profilePicture?: string;
-  dateJoined: Date;
+  dateJoined?: Date;
   dateLastSignedOn?: Date;
 }
 
