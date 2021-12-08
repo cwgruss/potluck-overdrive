@@ -11,7 +11,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { Ingredient } from '../domain/ingredient.model';
-import { IngredientDocument } from 'src/firestore/documents/ingredient.document';
+import { IngredientDocument } from 'src/shared/infrastructure/firestore/documents/ingredient.document';
 import { IngredientMap } from '../mappers/ingredient.mapper';
 
 export abstract class IIngredientRepository {

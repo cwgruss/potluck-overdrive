@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common';
-import { UserDocument } from '../../firestore/documents/user.document';
+import { UserDocument } from '../../shared/infrastructure/firestore/documents/user.document';
 import { EmailAddress } from '../domain/email-address.model';
 import { User } from '../domain/user.model';
 import { UserMap } from '../mappers/user.mapper';
