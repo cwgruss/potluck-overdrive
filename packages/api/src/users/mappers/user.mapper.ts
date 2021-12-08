@@ -7,12 +7,12 @@ export class UserMap {
   static toPersistance(user: User): UserFirestoreEntity {
     return {
       uid: user.id.toString(),
-      displayName: user.displayName,
+      displayName: user.displayName || '',
       email: user.emailAddress.value,
-      isEmailVerified: user.isEmailVerified,
+      isEmailVerified: user.isEmailVerified || false,
       joined: user.dateJoined.getUTCDate(),
-      photoURL: user.profilePicture,
-      role: user.role,
+      photoURL: user.profilePicture || '',
+      role: user.role || 'contributer',
     };
   }
 

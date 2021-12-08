@@ -12,7 +12,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     FirestoreModule.forRoot({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
-        keyFilename: config.get<string>('SA_KEY'),
+        apiKey: config.get<string>('FIREBASE_API_KEY'),
+        authDomain: config.get<string>('FIREBASE_AUTH_DOMAIN'),
+        projectId: config.get<string>('FIREBASE_PROJECT_ID'),
+        storageBucket: config.get<string>('FIREBASE_STORAGE_BUCKET'),
+        messagingSenderId: config.get<string>('FIREBASE_MESSAGING_SENDER_ID'),
+        appId: config.get<string>('FIREBASE_APP_ID'),
+        measurementId: config.get<string>('FIREBASE_MEASUREMENT_ID'),
       }),
       inject: [ConfigService],
     }),

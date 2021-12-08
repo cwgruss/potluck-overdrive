@@ -1,29 +1,42 @@
 import { Inject } from '@nestjs/common';
+import { UserDocument } from '../../firestore/documents/user.document';
 import { EmailAddress } from '../domain/email-address.model';
-import { UserDocument } from './user.document';
-import { CollectionReference } from '@google-cloud/firestore';
 import { User } from '../domain/user.model';
 import { UserMap } from '../mappers/user.mapper';
+import {
+  DocumentData,
+  query,
+  where,
+  getDocs,
+  CollectionReference,
+  doc,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
 
-export interface IUserRepository {
-  findUserByEmailAddress(emailAddress: EmailAddress): Promise<User>;
-  exists(emailAddress: EmailAddress): Promise<boolean>;
-  save(user: User): Promise<void>;
+export abstract class IUserRepository {
+  abstract findUserByEmailAddress(emailAddress: EmailAddress): Promise<User>;
+  abstract exists(emailAddress: EmailAddress): Promise<boolean>;
+  abstract save(user: User): Promise<void>;
 }
 
-export class UserRepository implements IUserRepository {
+export class UserRepository extends IUserRepository {
   constructor(
     @Inject(UserDocument.COLLECTION)
-    private _usersCollection: CollectionReference,
-  ) {}
+    private _usersCollection: CollectionReference<DocumentData>,
+  ) {
+    super();
+  }
 
   findUserByEmailAddress(emailAddress: EmailAddress): Promise<User> {
-    const docRef = this._usersCollection
-      .where('emailAddress', '==', emailAddress.value)
-      .get();
+    const q = query(
+      this._usersCollection,
+      where('emailAddress', '==', emailAddress.value),
+    );
+    const querySnapshot = getDocs(q);
 
     const user = new Promise<User>((resolve, reject) => {
-      docRef.then((snapshot) => {
+      querySnapshot.then((snapshot) => {
         const addressExists = !snapshot.empty;
         if (!addressExists) {
           reject('No users with that email address could be found.');
@@ -42,13 +55,15 @@ export class UserRepository implements IUserRepository {
     return user;
   }
 
-  exists(emailAddress: EmailAddress): Promise<boolean> {
-    const docRef = this._usersCollection
-      .where('emailAddress', '==', emailAddress.value)
-      .get();
+  async exists(emailAddress: EmailAddress): Promise<boolean> {
+    const q = query(
+      this._usersCollection,
+      where('emailAddress', '==', emailAddress.value),
+    );
+    const querySnapshot = getDocs(q);
 
     const exists = new Promise<boolean>((resolve, reject) => {
-      docRef
+      querySnapshot
         .then((snapshot) => {
           const addressExists = !snapshot.empty;
           resolve(addressExists);
@@ -67,12 +82,14 @@ export class UserRepository implements IUserRepository {
 
     try {
       if (!alreadyExists) {
-        await this._usersCollection.add(rawUser);
+        const newUserDoc = doc(this._usersCollection);
+        setDoc(newUserDoc, rawUser);
       } else {
-        const docRef = this._usersCollection.doc(user.id.toString());
+        const docRef = doc(this._usersCollection, user.id.toString());
+
         // Don't update everything. Instead, update the
         // properties permitted to be overwritten
-        await docRef.update({
+        await updateDoc(docRef, {
           displayName: rawUser.displayName,
           photoURL: rawUser.photoURL,
           role: rawUser.role,
