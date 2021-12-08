@@ -1,0 +1,23 @@
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { UsersModule } from './users/users.module';
+import { FirestoreModule } from './firestore/firestore.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
+@Module({
+  imports: [
+    UsersModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    FirestoreModule.forRoot({
+      imports: [ConfigModule],
+      useFactory: (config: ConfigService) => ({
+        keyFilename: config.get<string>('SA_KEY'),
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
