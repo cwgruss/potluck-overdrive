@@ -2,7 +2,7 @@ import { Entity } from 'src/shared/domain/Entity';
 import { Result } from 'src/core/monads/result';
 import { Label } from 'src/shared/domain/label/Label.model';
 import { UniqueEntityID } from 'src/shared/domain/UniqueEntityID';
-import { randomInt } from 'src/core/monads/util/random';
+import { Random } from 'src/core/monads/util/random';
 
 interface IngredientProps {
   priority: number;
@@ -14,9 +14,6 @@ interface IngredientProps {
 }
 
 export class Ingredient extends Entity<IngredientProps> {
-  static RANDOM_INDEX_MIN = 1;
-  static RANDOM_INDEX_MAX = 1_000_000_000;
-
   get id(): UniqueEntityID {
     return this._id;
   }
@@ -50,7 +47,7 @@ export class Ingredient extends Entity<IngredientProps> {
     super(props, id);
     this._randomSeedIndex = props.randomSeed
       ? props.randomSeed
-      : this._seedRandomIndex();
+      : this.generateNewRandomSeed();
   }
 
   public static create(
@@ -70,12 +67,9 @@ export class Ingredient extends Entity<IngredientProps> {
     return Result.ok(ingredient);
   }
 
-  public generateNewRandomSeed(): void {
-    const random = randomInt(
-      Ingredient.RANDOM_INDEX_MIN,
-      Ingredient.RANDOM_INDEX_MAX,
-    );
-    this._randomSeedIndex = random;
+  public generateNewRandomSeed(): number {
+    this._randomSeedIndex = Random.generateRandomSeed();
+    return this._randomSeedIndex;
   }
 
   public toJSON() {
@@ -87,13 +81,5 @@ export class Ingredient extends Entity<IngredientProps> {
       vegetarian: this.isVegetarian,
       random: this.randomSeedIndex,
     };
-  }
-
-  private _seedRandomIndex(): number {
-    const random = randomInt(
-      Ingredient.RANDOM_INDEX_MIN,
-      Ingredient.RANDOM_INDEX_MAX,
-    );
-    return 544790844;
   }
 }
