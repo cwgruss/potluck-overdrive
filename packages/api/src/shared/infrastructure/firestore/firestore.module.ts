@@ -1,17 +1,11 @@
-import { Module, DynamicModule } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
+import { FirebaseOptions, initializeApp } from 'firebase/app';
+import { collection, getFirestore } from 'firebase/firestore';
 import {
-  FirestoreDatabaseProvider,
-  FirestoreOptionsProvider,
   FirestoreCollectionProviders,
+  FirestoreDatabase,
+  FirestoreOptionsProvider,
 } from './firestore.provider';
-import { initializeApp, FirebaseOptions } from 'firebase/app';
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  DocumentData,
-  CollectionReference,
-} from 'firebase/firestore';
 
 type FirestoreModuleOptions = {
   imports: any[];
@@ -29,7 +23,7 @@ export class FirestoreModule {
     };
 
     const dbProvider = {
-      provide: FirestoreDatabaseProvider,
+      provide: FirestoreDatabase,
       useFactory: (firebaseConfig) => {
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -44,7 +38,7 @@ export class FirestoreModule {
         useFactory: (db) => {
           return collection(db, providerName);
         },
-        inject: [FirestoreDatabaseProvider],
+        inject: [FirestoreDatabase],
       }),
     );
 

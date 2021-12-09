@@ -8,4 +8,5 @@ export interface IngredientFirestoreEntity {
   key_value: string;
   date_created: Timestamp;
   is_vegetarian: boolean;
+  random_seed: number;
 }

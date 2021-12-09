@@ -8,11 +8,16 @@ import {
   CollectionReference,
   doc,
   setDoc,
+  getDoc,
   updateDoc,
+  writeBatch,
+  Firestore,
 } from 'firebase/firestore';
 import { Ingredient } from '../domain/ingredient.model';
 import { IngredientDocument } from 'src/shared/infrastructure/firestore/documents/ingredient.document';
 import { IngredientMap } from '../mappers/ingredient.mapper';
+import { IndexDocument } from 'src/shared/infrastructure/firestore/documents/unqiue-index.document';
+import { FirestoreDatabase } from 'src/shared/infrastructure/firestore/firestore.provider';
 
 export abstract class IIngredientRepository {
   abstract findAllIngredients(): Promise<Ingredient[]>;
@@ -21,9 +26,13 @@ export abstract class IIngredientRepository {
 }
 
 export class IngredientRepository extends IIngredientRepository {
+  static RANDOM_INDEX_PREFIX = 'Ingredients/random_seed';
   constructor(
     @Inject(IngredientDocument.COLLECTION)
     private _ingredientCollection: CollectionReference<DocumentData>,
+    @Inject(IndexDocument.COLLECTION)
+    private _indexCollection: CollectionReference<DocumentData>,
+    @Inject(FirestoreDatabase) private _firestore: Firestore,
   ) {
     super();
   }
@@ -51,29 +60,42 @@ export class IngredientRepository extends IIngredientRepository {
 
   async save(ingredient: Ingredient): Promise<void> {
     const alreadyExists = await this.exists(ingredient.label.keyValue);
-    const rawIngredient = IngredientMap.toPersistance(ingredient);
+    let rawIngredient = IngredientMap.toPersistance(ingredient);
 
-    try {
-      if (!alreadyExists) {
-        const newIngredientDoc = doc(this._ingredientCollection);
-        setDoc(newIngredientDoc, rawIngredient);
-      } else {
-        const docRef = doc(
-          this._ingredientCollection,
-          ingredient.id.toString(),
-        );
+    if (!alreadyExists) {
+      let isSeedUnique = await this._isRandomSeedUnique(ingredient);
 
-        // Don't update everything. Instead, update the
-        // properties permitted to be overwritten
-        await updateDoc(docRef, {
-          label: rawIngredient.label,
-          description: rawIngredient.description,
-          priority: rawIngredient.priority,
-          is_vegetarian: rawIngredient.is_vegetarian,
-        });
+      if (!isSeedUnique) {
+        let i = 0;
+        do {
+          ingredient.generateNewRandomSeed();
+          isSeedUnique = await this._isRandomSeedUnique(ingredient);
+        } while (i <= 3 && !isSeedUnique);
       }
-    } catch (error) {
-      console.error(error);
+
+      rawIngredient = IngredientMap.toPersistance(ingredient);
+
+      const batch = writeBatch(this._firestore);
+      const newIngredientRef = doc(this._ingredientCollection);
+
+      const indexRefName = `${IngredientRepository.RANDOM_INDEX_PREFIX}/${ingredient.randomSeedIndex}`;
+      const ingredientIndexRef = doc(this._indexCollection, indexRefName);
+      batch.set(newIngredientRef, rawIngredient);
+      batch.set(ingredientIndexRef, {
+        ref_value: newIngredientRef.id,
+      });
+      return await batch.commit();
+    } else {
+      const docRef = doc(this._ingredientCollection, ingredient.id.toString());
+
+      // Don't update everything. Instead, update the
+      // properties permitted to be overwritten
+      await updateDoc(docRef, {
+        label: rawIngredient.label,
+        description: rawIngredient.description,
+        priority: rawIngredient.priority,
+        is_vegetarian: rawIngredient.is_vegetarian,
+      });
     }
 
     return;
@@ -91,5 +113,13 @@ export class IngredientRepository extends IIngredientRepository {
       }
     });
     return ingredients;
+  }
+
+  private async _isRandomSeedUnique(ingredient: Ingredient): Promise<boolean> {
+    const indexRefName = `${IngredientRepository.RANDOM_INDEX_PREFIX}/${ingredient.randomSeedIndex}`;
+    const ingredientIndexRef = doc(this._indexCollection, indexRefName);
+    const snapshot = await getDoc(ingredientIndexRef);
+    const alreadyExists = snapshot.exists();
+    return !alreadyExists;
   }
 }

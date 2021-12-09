@@ -14,6 +14,7 @@ export class IngredientMap {
       key_value: ingredient.label.keyValue,
       date_created: Timestamp.fromDate(ingredient.dateCreated),
       is_vegetarian: ingredient.isVegetarian,
+      random_seed: ingredient.randomSeedIndex,
     };
   }
 
