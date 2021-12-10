@@ -85,7 +85,7 @@ export class UserRepository extends IUserRepository {
         const newUserDoc = doc(this._usersCollection);
         setDoc(newUserDoc, rawUser);
       } else {
-        const docRef = doc(this._usersCollection, user.id.toString());
+        const docRef = doc(this._usersCollection, user.uuid.toString());
 
         // Don't update everything. Instead, update the
         // properties permitted to be overwritten

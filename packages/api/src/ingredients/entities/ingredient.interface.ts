@@ -1,7 +1,8 @@
 import { Timestamp } from 'firebase/firestore';
 
 export interface IngredientData {
-  id?: string;
+  uuid?: string;
+  index?: number;
   priority: number;
   label: string;
   description?: string;

@@ -6,7 +6,7 @@ import { UserFirestoreEntity } from '../entity/user.interface';
 export class UserMap {
   static toPersistance(user: User): UserFirestoreEntity {
     return {
-      uid: user.id.toString(),
+      uuid: user.uuid.toString(),
       displayName: user.displayName || '',
       email: user.emailAddress.value,
       isEmailVerified: user.isEmailVerified || false,
@@ -29,7 +29,7 @@ export class UserMap {
         firstName: data.firstName,
         lastName: data.lastName,
       },
-      new UniqueEntityID(data.uid),
+      new UniqueEntityID(data.uuid),
     );
 
     if (userOrError.isFail()) {

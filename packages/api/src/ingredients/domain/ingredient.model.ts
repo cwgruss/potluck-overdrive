@@ -5,6 +5,7 @@ import { UniqueEntityID } from 'src/shared/domain/UniqueEntityID';
 import { Random } from 'src/core/monads/util/random';
 
 interface IngredientProps {
+  index?: number;
   priority: number;
   label: Label;
   description?: string;
@@ -43,8 +44,13 @@ export class Ingredient extends Entity<IngredientProps> {
   }
   private _randomSeedIndex;
 
-  private constructor(props: IngredientProps, id?: UniqueEntityID) {
-    super(props, id);
+  get index(): number {
+    return this._index;
+  }
+  private _index: number;
+
+  private constructor(props: IngredientProps, uuid?: UniqueEntityID) {
+    super(props, uuid);
     this._randomSeedIndex = props.randomSeed
       ? props.randomSeed
       : this.generateNewRandomSeed();
@@ -52,7 +58,7 @@ export class Ingredient extends Entity<IngredientProps> {
 
   public static create(
     props: IngredientProps,
-    id?: UniqueEntityID,
+    uuid?: UniqueEntityID,
   ): Result<Ingredient, Error> {
     const ingredient = new Ingredient(
       {
@@ -62,7 +68,7 @@ export class Ingredient extends Entity<IngredientProps> {
           : new Date(Date.now()),
         isVegetarian: props.isVegetarian || false,
       },
-      id,
+      uuid,
     );
     return Result.ok(ingredient);
   }
@@ -79,6 +85,7 @@ export class Ingredient extends Entity<IngredientProps> {
       priority: this.priority,
       dateCreated: this.dateCreated.toISOString(),
       vegetarian: this.isVegetarian,
+      index: this.index,
       random: this.randomSeedIndex,
     };
   }

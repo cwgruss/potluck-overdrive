@@ -17,7 +17,7 @@ interface UserProps {
 }
 
 export class User extends AggregateRoot {
-  get id(): UniqueEntityID {
+  get uuid(): UniqueEntityID {
     return this._id;
   }
   protected _id: UniqueEntityID;
@@ -67,9 +67,9 @@ export class User extends AggregateRoot {
   }
   protected _role: string;
 
-  constructor(props: UserProps, id?: UniqueEntityID) {
+  constructor(props: UserProps, uuid?: UniqueEntityID) {
     super();
-    this._id = id ? id : new UniqueEntityID();
+    this._id = uuid ? uuid : new UniqueEntityID();
     this._firstName = props.firstName;
     this._lastName = props.lastName;
     this._displayName = props.displayName;
@@ -83,19 +83,19 @@ export class User extends AggregateRoot {
 
   public static create(
     props: UserProps,
-    id?: UniqueEntityID,
+    uuid?: UniqueEntityID,
   ): Result<User, Error> {
     const user = new User(
       {
         ...props,
       },
-      id,
+      uuid,
     );
 
-    const wasIdProvided = !!id;
+    const wasIdProvided = !!uuid;
 
     if (!wasIdProvided) {
-      user.apply(new UserCreatedEvent(user.id));
+      user.apply(new UserCreatedEvent(user.uuid));
     }
 
     return Result.ok(user);

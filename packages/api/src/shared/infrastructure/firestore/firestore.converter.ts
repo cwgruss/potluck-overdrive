@@ -7,17 +7,17 @@ import {
 } from 'firebase/firestore';
 
 type FirestoreData = {
-  id: string;
+  uuid: string;
 };
 
 const Converter = <T extends FirestoreData>() => ({
   toFirestore: (data: T) => data,
   fromFirestore: (snap: QueryDocumentSnapshot) => {
     if (snap.exists()) {
-      const id = snap.id;
+      const uuid = snap.id;
       const data = snap.data();
       return {
-        id,
+        uuid,
         ...data,
       } as T;
     }

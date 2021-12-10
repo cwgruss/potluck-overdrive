@@ -31,6 +31,7 @@ export class IngredientMap {
 
     const ingredientOrError = Ingredient.create(
       {
+        index: data.index,
         label: labelOrError.unwrap(),
         priority: data.priority,
         description: data.description,
@@ -38,7 +39,7 @@ export class IngredientMap {
         dateCreated: data?.date_created?.toDate(),
         randomSeed: data.random_seed,
       },
-      new UniqueEntityID(data.id),
+      new UniqueEntityID(data.uuid),
     );
 
     if (ingredientOrError.isFail()) {

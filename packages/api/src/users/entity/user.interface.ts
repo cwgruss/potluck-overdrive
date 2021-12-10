@@ -7,5 +7,5 @@ export interface UserFirestoreEntity {
   photoURL: string;
   role: string;
   isEmailVerified: boolean;
-  uid?: string;
+  uuid?: string;
 }

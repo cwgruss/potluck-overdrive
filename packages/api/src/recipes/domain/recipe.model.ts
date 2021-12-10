@@ -87,7 +87,7 @@ export class Recipe extends AggregateRoot implements IRecipe {
   public toJSON() {
     const ingredients = this.ingredients.map((i) => i.toJSON());
     return {
-      id: this.uuid,
+      uuid: this.uuid,
       ingredients,
     };
   }
