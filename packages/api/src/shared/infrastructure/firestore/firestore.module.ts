@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { FirebaseOptions, initializeApp } from 'firebase/app';
 import { collection, getFirestore } from 'firebase/firestore';
+import { NormalizedCollection } from './firestore.converter';
 import {
   FirestoreCollectionProviders,
   FirestoreDatabase,
@@ -36,7 +37,7 @@ export class FirestoreModule {
       (providerName) => ({
         provide: providerName,
         useFactory: (db) => {
-          return collection(db, providerName);
+          return NormalizedCollection(db, providerName);
         },
         inject: [FirestoreDatabase],
       }),

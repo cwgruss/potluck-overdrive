@@ -3,10 +3,10 @@ import { Result } from 'src/core/monads/result';
 import { Label } from 'src/shared/domain/label/Label.model';
 import { UniqueEntityID } from 'src/shared/domain/UniqueEntityID';
 import { Ingredient } from '../domain/ingredient.model';
-import { IngredientFirestoreEntity } from '../entities/ingredient.interface';
+import { IngredientData } from '../entities/ingredient.interface';
 
 export class IngredientMap {
-  static toPersistance(ingredient: Ingredient): IngredientFirestoreEntity {
+  static toPersistance(ingredient: Ingredient): IngredientData {
     return {
       label: ingredient.label.value,
       description: ingredient.description || '',
@@ -19,7 +19,7 @@ export class IngredientMap {
   }
 
   static toDomain(
-    data: unknown & Partial<IngredientFirestoreEntity>,
+    data: unknown & Partial<IngredientData>,
   ): Result<Ingredient, Error> {
     const labelOrError = Label.create({
       label: data.label,
@@ -36,6 +36,7 @@ export class IngredientMap {
         description: data.description,
         isVegetarian: data.is_vegetarian,
         dateCreated: data?.date_created?.toDate(),
+        randomSeed: data.random_seed,
       },
       new UniqueEntityID(data.id),
     );

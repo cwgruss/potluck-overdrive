@@ -1,11 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { Recipe } from './domain/recipe.model';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
+import { IRecipeRepository } from './repository/recipe.repository';
 
 @Injectable()
 export class RecipesService {
-  create(createRecipeDto: CreateRecipeDto) {
-    return 'This action adds a new recipe';
+  constructor(private _recipeRepository: IRecipeRepository) {}
+
+  async create(createRecipeDto: CreateRecipeDto): Promise<Recipe> {
+    const recipe =
+      await this._recipeRepository.createRecipeWithRandomIngredients(4);
+    return recipe;
   }
 
   findAll() {

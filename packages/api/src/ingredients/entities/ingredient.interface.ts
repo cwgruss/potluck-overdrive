@@ -1,6 +1,6 @@
 import { Timestamp } from 'firebase/firestore';
 
-export interface IngredientFirestoreEntity {
+export interface IngredientData {
   id?: string;
   priority: number;
   label: string;
