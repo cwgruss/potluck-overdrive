@@ -64,13 +64,13 @@ export class Recipe extends AggregateRoot implements IRecipe {
 
     if (ingredient instanceof Ingredient) {
       updatedIngredients = filter(this._ingredients, (value) => {
-        return value.id.equals(ingredient.id);
+        return value.uuid.equals(ingredient.uuid);
       });
     }
 
     if (ingredient instanceof UniqueEntityID) {
       updatedIngredients = filter(this._ingredients, (value) => {
-        return value.id.equals(ingredient);
+        return value.uuid.equals(ingredient);
       });
     }
 
@@ -79,7 +79,7 @@ export class Recipe extends AggregateRoot implements IRecipe {
 
   public containsIngredient(ingredient: Ingredient): boolean {
     const ingredientIdx = this._ingredients.findIndex((item) => {
-      return item.id.equals(ingredient.id);
+      return item.uuid.equals(ingredient.uuid);
     });
     return ingredientIdx > -1;
   }

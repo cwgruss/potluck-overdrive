@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { IngredientsService } from './ingredients.service';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
@@ -32,12 +33,12 @@ export class IngredientsController {
     return this.ingredientsService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updateIngredientDto: UpdateIngredientDto,
   ) {
-    return this.ingredientsService.update(+id, updateIngredientDto);
+    return this.ingredientsService.update(id, updateIngredientDto);
   }
 
   @Delete(':id')

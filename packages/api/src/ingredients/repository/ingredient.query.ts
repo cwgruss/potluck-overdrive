@@ -6,9 +6,9 @@ import {
   DocumentData,
   query as FirebaseQuery,
 } from 'firebase/firestore';
-import { Ingredient } from 'src/ingredients/domain/ingredient.model';
+import { FieldPath, documentId } from 'firebase/firestore';
 
-export const RecipeContext = {
+export const IngredientContext = {
   query(
     q: Query<DocumentData>,
     ...constraints: QueryConstraint[]
@@ -22,18 +22,12 @@ export const RecipeContext = {
       return where('random_seed', '>=', randomIndex);
     },
 
-    IngredientIDIsNotInArray: function (
-      ingredientsToExclude: Ingredient[],
-    ): QueryConstraint {
-      if (!ingredientsToExclude || !ingredientsToExclude.length) {
+    IngredientIDIs: function (ingredientID: string): QueryConstraint {
+      if (!ingredientID || !ingredientID.length) {
         return;
       }
 
-      const exludedIngredientIds = ingredientsToExclude.map(
-        (ingredient) => ingredient.uuid,
-      );
-
-      return where('id', 'not-in', exludedIngredientIds);
+      return where(documentId(), '==', ingredientID);
     },
   },
 

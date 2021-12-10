@@ -15,8 +15,8 @@ interface IngredientProps {
 }
 
 export class Ingredient extends Entity<IngredientProps> {
-  get id(): UniqueEntityID {
-    return this._id;
+  get uuid(): UniqueEntityID {
+    return this._uuid;
   }
 
   get label(): Label {
