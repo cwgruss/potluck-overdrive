@@ -3,9 +3,10 @@ import { Result } from 'src/core/monads/result';
 import { Label } from 'src/shared/domain/label/Label.model';
 import { UniqueEntityID } from 'src/shared/domain/UniqueEntityID';
 import { Random } from 'src/core/monads/util/random';
+import { Index } from 'src/shared/domain/index/Index.model';
 
 interface IngredientProps {
-  index?: number;
+  index?: Index;
   priority: number;
   label: Label;
   description?: string;
@@ -44,10 +45,9 @@ export class Ingredient extends Entity<IngredientProps> {
   }
   private _randomSeedIndex;
 
-  get index(): number {
-    return this._index;
+  get index(): Index {
+    return this.props.index;
   }
-  private _index: number;
 
   private constructor(props: IngredientProps, uuid?: UniqueEntityID) {
     super(props, uuid);

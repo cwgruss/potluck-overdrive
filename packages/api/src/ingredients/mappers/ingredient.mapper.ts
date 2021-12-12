@@ -1,5 +1,6 @@
 import { Timestamp } from 'firebase/firestore';
 import { Result } from 'src/core/monads/result';
+import { Index } from 'src/shared/domain/index/Index.model';
 import { Label } from 'src/shared/domain/label/Label.model';
 import { UniqueEntityID } from 'src/shared/domain/UniqueEntityID';
 import { Ingredient } from '../domain/ingredient.model';
@@ -29,9 +30,11 @@ export class IngredientMap {
       return Result.fail(labelOrError.unwrapFail());
     }
 
+    const index = Index.create({ index: data.index });
+
     const ingredientOrError = Ingredient.create(
       {
-        index: data.index,
+        index,
         label: labelOrError.unwrap(),
         priority: data.priority,
         description: data.description,

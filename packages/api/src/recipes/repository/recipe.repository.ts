@@ -121,6 +121,7 @@ export class RecipeRepository implements IRecipeRepository {
       RecipeContext.Where.IngredientIDIsNotInArray(exclude),
       RecipeContext.OrderBy.RandomSeed(),
       RecipeContext.OrderBy.Priority(),
+      RecipeContext.Where.IngredientHasIndex(),
       limit(ingredientLimit),
     );
     return queryRef;

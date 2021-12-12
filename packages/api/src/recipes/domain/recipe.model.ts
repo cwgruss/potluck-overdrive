@@ -4,6 +4,8 @@ import { UniqueEntityID } from 'src/shared/domain/UniqueEntityID';
 import { IRecipe } from './recipe.interface';
 import { filter } from 'lodash';
 import { Result } from 'src/core/monads/result';
+import { IndexHashMap } from 'src/shared/domain/index/IndexHashMap.model';
+import { Index } from 'src/shared/domain/index/Index.model';
 
 interface RecipeProps {
   ingredients: Ingredient[];
@@ -14,6 +16,8 @@ export class Recipe extends AggregateRoot implements IRecipe {
     return this._ingredients;
   }
   private _ingredients: Ingredient[] = [];
+
+  private _ingredientHashMap: IndexHashMap<Index>;
 
   get ingredientCount(): number {
     return this._ingredients.length;
@@ -28,6 +32,9 @@ export class Recipe extends AggregateRoot implements IRecipe {
     super();
     this._ingredients = props.ingredients;
     this._uuid = uuid ? uuid : new UniqueEntityID();
+
+    const indexes = this._ingredients.map((item) => item.index);
+    this._ingredientHashMap = new IndexHashMap(indexes);
   }
 
   public static create(): Result<Recipe, Error> {
@@ -47,6 +54,9 @@ export class Recipe extends AggregateRoot implements IRecipe {
 
     if (ingredient instanceof UniqueEntityID) {
     }
+
+    const indexes = this._ingredients.map((item) => item.index);
+    this._ingredientHashMap = new IndexHashMap(indexes);
   }
 
   addIngredients(...ingredients: Ingredient[]): void {
@@ -69,12 +79,14 @@ export class Recipe extends AggregateRoot implements IRecipe {
     }
 
     if (ingredient instanceof UniqueEntityID) {
-      updatedIngredients = filter(this._ingredients, (value) => {
+      updatedIngredients = filter(this._ingredients, (value, idx) => {
         return value.uuid.equals(ingredient);
       });
     }
 
     this._ingredients = updatedIngredients;
+    const indexes = this._ingredients.map((item) => item.index);
+    this._ingredientHashMap = new IndexHashMap(indexes);
   }
 
   public containsIngredient(ingredient: Ingredient): boolean {
@@ -86,9 +98,11 @@ export class Recipe extends AggregateRoot implements IRecipe {
 
   public toJSON() {
     const ingredients = this.ingredients.map((i) => i.toJSON());
+    const hash = this._ingredientHashMap.toHashCode();
     return {
       uuid: this.uuid,
       ingredients,
+      hash_code: hash,
     };
   }
 }

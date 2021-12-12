@@ -22,6 +22,10 @@ export const RecipeContext = {
       return where('random_seed', '>=', randomIndex);
     },
 
+    IngredientHasIndex: function (): QueryConstraint {
+      return orderBy('index');
+    },
+
     IngredientIDIsNotInArray: function (
       ingredientsToExclude: Ingredient[],
     ): QueryConstraint {
