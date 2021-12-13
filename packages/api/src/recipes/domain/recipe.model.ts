@@ -9,6 +9,8 @@ import { Index } from 'src/shared/domain/index/Index.model';
 
 interface RecipeProps {
   ingredients: Ingredient[];
+  label?: string;
+  dateCreated?: Date;
 }
 
 export class Recipe extends AggregateRoot implements IRecipe {
@@ -16,6 +18,16 @@ export class Recipe extends AggregateRoot implements IRecipe {
     return this._ingredients;
   }
   private _ingredients: Ingredient[] = [];
+
+  get label(): string {
+    return this._label;
+  }
+  private _label: string;
+
+  get dateCreated(): Date {
+    return this._dateCreated;
+  }
+  private _dateCreated: Date;
 
   private _ingredientHashMap: IndexHashMap<Index>;
 
@@ -32,15 +44,19 @@ export class Recipe extends AggregateRoot implements IRecipe {
     super();
     this._ingredients = props.ingredients;
     this._uuid = uuid ? uuid : new UniqueEntityID();
-
+    this._label = props.label;
+    this._dateCreated = props.dateCreated;
     const indexes = this._ingredients.map((item) => item.index);
     this._ingredientHashMap = new IndexHashMap(indexes);
   }
 
-  public static create(): Result<Recipe, Error> {
+  public static create(props: RecipeProps): Result<Recipe, Error> {
     return Result.ok(
       new Recipe({
         ingredients: [],
+        dateCreated: props.dateCreated
+          ? props.dateCreated
+          : new Date(Date.now()),
       }),
     );
   }

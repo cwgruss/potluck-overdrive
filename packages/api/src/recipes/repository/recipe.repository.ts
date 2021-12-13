@@ -1,6 +1,9 @@
 import { Inject } from '@nestjs/common';
+import { SSL_OP_NETSCAPE_DEMO_CIPHER_CHANGE_BUG } from 'constants';
 import {
   CollectionReference,
+  doc,
+  setDoc,
   DocumentData,
   getDocs,
   limit,
@@ -11,8 +14,10 @@ import { Random } from 'src/core/monads/util/random';
 import { Ingredient } from 'src/ingredients/domain/ingredient.model';
 import { IngredientMap } from 'src/ingredients/mappers/ingredient.mapper';
 import { IngredientDocument } from 'src/shared/infrastructure/firestore/documents/ingredient.document';
+import { RecipeDocument } from 'src/shared/infrastructure/firestore/documents/Recipe.document';
+import { RecipeContext } from '../../shared/infrastructure/firestore/queries/Ingredient.query';
 import { Recipe } from '../domain/recipe.model';
-import { RecipeContext } from './recipe.query';
+import { RecipeMapper } from '../mappers/recipe.mapper';
 
 export abstract class IRecipeRepository {
   abstract createRecipeWithRandomIngredients(
@@ -24,29 +29,45 @@ export class RecipeRepository implements IRecipeRepository {
   constructor(
     @Inject(IngredientDocument.COLLECTION)
     private _ingredientCollection: CollectionReference<DocumentData>,
+    @Inject(RecipeDocument.COLLECTION)
+    private _recipeCollection: CollectionReference<DocumentData>,
   ) {}
 
   async createRecipeWithRandomIngredients(
     numberOfIngredients: number = 3,
     correctiveMultiplier: number = 1.2,
   ): Promise<Recipe> {
-    const result = Recipe.create();
-    if (result.isFail()) {
-      //TODO: Fail with error
-      return;
+    try {
+      const result = Recipe.create({
+        ingredients: [],
+      });
+
+      if (result.isFail()) {
+        //TODO: Fail with error
+        return;
+      }
+
+      const newRecipe = result.unwrap();
+      const correctedIngredientCount = Math.ceil(
+        numberOfIngredients * correctiveMultiplier,
+      );
+
+      const ingredients = await this._getRandomIngredients(
+        correctedIngredientCount,
+      );
+
+      const ingredientsToAdd = ingredients.slice(0, numberOfIngredients);
+      newRecipe.addIngredients(...ingredientsToAdd);
+
+      const rawRecipe = RecipeMapper.toPersistance(newRecipe);
+      const recipeDocRef = doc(this._recipeCollection, rawRecipe.uuid);
+      await setDoc(recipeDocRef, rawRecipe);
+      return newRecipe;
+    } catch (error) {
+      console.error(error);
+
+      throw error;
     }
-
-    const newRecipe = result.unwrap();
-    const correctedIngredientCount = Math.ceil(
-      numberOfIngredients * correctiveMultiplier,
-    );
-
-    const ingredients = await this._getRandomIngredients(
-      correctedIngredientCount,
-    );
-    const ingredientsToAdd = ingredients.slice(0, numberOfIngredients);
-    newRecipe.addIngredients(...ingredientsToAdd);
-    return newRecipe;
   }
 
   private async _getRandomIngredients(
@@ -56,6 +77,7 @@ export class RecipeRepository implements IRecipeRepository {
       const querySnapshot = await this._queryRandomIngredients({
         limit: numberOfIngredients,
       });
+
       const ingredients = querySnapshot.docs.map((doc) => {
         if (doc.exists()) {
           const data = doc.data();
