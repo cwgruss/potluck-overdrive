@@ -1,6 +1,6 @@
 # --- Node API Build ---
 # --------------------------------------------
-FROM node:16 as api
+FROM node:16 as build
 
 WORKDIR /app
 
@@ -18,16 +18,17 @@ RUN npm ci --production
 # --- 2. Build Web App ---
 # --------------------------------------------
 FROM node:16 as app
+
 ENV NODE_ENV=production
+
 USER node 
 
 WORKDIR /app
-
-RUN npm install pm2 -g
 
 #///// Copy from server build ///////
 COPY --from=build --chown=node:node  /app/node_modules /app/node_modules
 COPY --from=build --chown=node:node /app/dist /app/
 
+RUN chown -R node:node /app/node_modules
 
-CMD ["pm2-runtime", "main.js"]
+CMD ["npx", "pm2-runtime", "main.js"]
