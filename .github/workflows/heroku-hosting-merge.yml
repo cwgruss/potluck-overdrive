@@ -21,7 +21,7 @@ jobs:
       - name: Build API
         run: |
           echo "Running Build"
-          npm run build --prefix ./packages/ui
+          npm run build --prefix ./packages/api
 
       - name: Deploy to Heroku
         uses: ./.github/actions/heroku
