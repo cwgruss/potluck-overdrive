@@ -57,12 +57,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { Container as InversifyContainer } from "inversify";
-import { TYPES } from "@/shared/providers/types";
-import { AccountService } from "@/modules/account/account.service";
-import { Logger } from "@/shared/core/logger";
-import { LogManager } from "@/shared/core/logger";
+import {Component, Vue} from 'vue-property-decorator';
+import {Container as InversifyContainer} from 'inversify';
+import {TYPES} from '@/shared/providers/types';
+import {AccountService} from '@/modules/account/account.service';
+import {Logger} from '@/shared/core/logger';
+import {LogManager} from '@/shared/core/logger';
 
 @Component({
   inject: {
@@ -85,15 +85,17 @@ export default class CreateAccount extends Vue {
 
     this.logger = this.container
       .get<LogManager>(TYPES.LogManager)
-      .getLogger("modules.account.CreateAccount");
+      .getLogger('modules.account.CreateAccount');
 
-    this.logger?.info("created CreateAccount");
+    this.logger?.info('created CreateAccount');
   }
 
   async handleCreateAccount(
     emailAddress: string,
-    password: string
+    password: string,
+    event: Event
   ): Promise<void> {
+    event.preventDefault();
     await this._accountService?.createNewUserWithEmailAndPassword(
       emailAddress,
       password

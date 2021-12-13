@@ -66,11 +66,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { Container as InversifyContainer } from "inversify";
-import { TYPES } from "@/shared/providers/types";
-import { AccountService } from "@/modules/account/account.service";
-import { AccountVueXStateProxy } from "@/shared/api/infrastructure/store/account";
+import {Component, Vue} from 'vue-property-decorator';
+import {Container as InversifyContainer} from 'inversify';
+import {TYPES} from '@/shared/providers/types';
+import {AccountService} from '@/modules/account/account.service';
+import {AccountVueXStateProxy} from '@/shared/api/infrastructure/store/account';
 
 @Component({
   inject: {
@@ -91,7 +91,7 @@ export default class SignIn extends Vue {
   }
 
   handleGoogleSignIn(): void {
-    this._stateProxy.signInWithGoogle().then((result) => {
+    this._stateProxy.signInWithGoogle().then(result => {
       if (result.isFail()) {
         alert(result.unwrapFail());
         return;
@@ -108,7 +108,7 @@ export default class SignIn extends Vue {
     event.preventDefault();
     this._stateProxy
       .signInWithEmailAndPassword(emailAddress, password)
-      .then((result) => {
+      .then(result => {
         if (result.isFail()) {
           alert(result.unwrapFail());
           return;

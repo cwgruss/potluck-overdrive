@@ -4,5 +4,72 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write;
     }
+
+    // index collection helper methods
+    function getIndexAfter(path) {
+      return getAfter(/databases/$(database)/documents/Index/$(path))
+    }
+
+    function getIndexBefore(path) {
+      return get(/databases/$(database)/documents/Index/$(path))
+    }
+
+    function indexExistsAfter(path) {
+      return existsAfter(/databases/$(database)/documents/Index/$(path))
+    }
+
+    function indexExistsBefore(path) {
+      return exists(/databases/$(database)/documents/Index/$(path))
+    }
+
+    // --- ingredients Helpers ---
+    // --------------------------------------------
+    function getIngredientsAfter(id) {
+      return getAfter(/databases/$(database)/documents/Ingredients/$(id))
+    }
+
+    function getIngredientsBefore(id) {
+      return get(/databases/$(database)/documents/Ingredients/$(id))
+    }
+
+    function ingredientExistsAfter(id) {
+      return existsAfter(/databases/$(database)/documents/Ingredients/$(id))
+    }
+
+    function ingredientExistsBefore(id) {
+      return exists(/databases/$(database)/documents/Ingredients/$(id))
+    }
+
+    // --- ingredients Rules ---
+    // --------------------------------------------
+   match /Ingredients/{id} {
+      allow read: if 
+        true;
+
+      allow create: if
+        getIndexAfter(/Ingredients/random_seed/$(getIngredientsAfter(id).data.random_seed)).data.ref_value == id;
+
+      allow update: if
+        getIndexAfter(/Ingredients/random_seed/$(getIngredientsAfter(id).data.random_seed)).data.ref_value == id &&
+        !indexExistsBefore(/Ingredients/random_seed/$(getIngredientsAfter(id).data.random_seed));
+
+      allow delete: if
+        !indexExistsAfter(/Ingredients/random_seed/$(getIngredientsAfter(id).data.random_seed));
+    }
+
+    match /Index/Ingredients/random_seed/{random} {
+      allow read: if true;
+
+      allow update: if false;
+
+      allow create: if
+        !indexExistsBefore(/Ingredients/random_seed/$(random)) &&
+        getIngredientsAfter(getIndexAfter(/Ingredients/random_seed/$(random)).data.ref_value).data.random_seed == random;
+
+      allow delete: if 
+        !ingredientExistsAfter(getIndexBefore(/Ingredients/random_seed/$(random)).data.ref_value) || 
+        getIngredientsAfter(getIndexBefore(/Ingredients/random_seed/$(random)).data.ref_value).data.random_seed != random;
+    }
+
   }
 }
