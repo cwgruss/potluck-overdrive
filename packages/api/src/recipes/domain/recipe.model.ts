@@ -50,14 +50,20 @@ export class Recipe extends AggregateRoot implements IRecipe {
     this._ingredientHashMap = new IndexHashMap(indexes);
   }
 
-  public static create(props: RecipeProps): Result<Recipe, Error> {
+  public static create(
+    props: RecipeProps,
+    uuid?: UniqueEntityID,
+  ): Result<Recipe, Error> {
     return Result.ok(
-      new Recipe({
-        ingredients: [],
-        dateCreated: props.dateCreated
-          ? props.dateCreated
-          : new Date(Date.now()),
-      }),
+      new Recipe(
+        {
+          ingredients: [],
+          dateCreated: props.dateCreated
+            ? props.dateCreated
+            : new Date(Date.now()),
+        },
+        uuid,
+      ),
     );
   }
 
@@ -103,6 +109,14 @@ export class Recipe extends AggregateRoot implements IRecipe {
     this._ingredients = updatedIngredients;
     const indexes = this._ingredients.map((item) => item.index);
     this._ingredientHashMap = new IndexHashMap(indexes);
+  }
+
+  public isVegetarian(): boolean {
+    const isVeg = this._ingredients.every((ingredient) => {
+      return ingredient.isVegetarian === true;
+    });
+
+    return isVeg;
   }
 
   public containsIngredient(ingredient: Ingredient): boolean {

@@ -18,7 +18,9 @@ export const IngredientContext = {
   },
 
   Where: {
-    RandomSeedIsGreaterThan: function (randomIndex: number): QueryConstraint {
+    IngredientSeedIsGreaterThan: function (
+      randomIndex: number,
+    ): QueryConstraint {
       return where('random_seed', '>=', randomIndex);
     },
 
@@ -28,6 +30,10 @@ export const IngredientContext = {
       }
 
       return where(documentId(), '==', ingredientID);
+    },
+
+    IngredientIsVegetarian: function (): QueryConstraint {
+      return where('is_vegetarian', '==', true);
     },
   },
 
